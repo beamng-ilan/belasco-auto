@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('siteTheme');
+        if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      } catch (e) {}
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="b8vdTDfntMZYIGToC6Wa-GGe-v7FiOzlrNRQY48eGxE" />
@@ -35,6 +43,48 @@
       --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.35);
       --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.5);
       --radius: 12px;
+      --header-bg: rgba(24, 27, 33, 0.85);
+    }
+
+    /* ===== AÇIK TEMA ===== */
+    html[data-theme="light"] {
+      --bg: #f4f5f7;
+      --card: #ffffff;
+      --card-2: #f9fafb;
+      --hover: #eef0f3;
+      --accent: #ff6b00;
+      --accent-2: #ff9142;
+      --accent-hover: #e05e00;
+      --accent-grad: linear-gradient(135deg, var(--accent), var(--accent-2));
+      --accent-soft: rgba(255, 107, 0, 0.1);
+      --text: #14161a;
+      --muted: #6b7280;
+      --border: #e2e4e9;
+      --border-soft: rgba(0, 0, 0, 0.06);
+      --danger: #dc2626;
+      --mod: #2563eb;
+      --pending: #d97706;
+      --banned: #dc2626;
+      --shadow-sm: 0 2px 8px rgba(20, 22, 26, 0.06);
+      --shadow-md: 0 10px 24px rgba(20, 22, 26, 0.08);
+      --shadow-lg: 0 20px 48px rgba(20, 22, 26, 0.12);
+      --header-bg: rgba(255, 255, 255, 0.82);
+    }
+    html[data-theme="light"] body {
+      background:
+        radial-gradient(circle at 12% -10%, rgba(255, 107, 0, 0.06), transparent 45%),
+        radial-gradient(circle at 88% 0%, rgba(37, 99, 235, 0.04), transparent 40%),
+        var(--bg);
+    }
+    html[data-theme="light"] #appLoader,
+    html[data-theme="light"] .hero {
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255, 107, 0, 0.1), transparent 55%),
+        radial-gradient(circle at 85% 100%, rgba(37, 99, 235, 0.06), transparent 50%),
+        var(--card);
+    }
+    html[data-theme="light"] #appLoader {
+      background: var(--bg);
     }
 
     /* ===== RESET ===== */
@@ -122,7 +172,7 @@
 
     /* ===== HEADER ===== */
     header {
-      background: rgba(24, 27, 33, 0.85);
+      background: var(--header-bg);
       backdrop-filter: blur(14px) saturate(160%);
       -webkit-backdrop-filter: blur(14px) saturate(160%);
       border-bottom: 1px solid var(--border-soft);
@@ -443,6 +493,33 @@
     .dropdown-panel-body {
       max-height: 380px;
       overflow-y: auto;
+    }
+    .desktop-notif-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0.55rem 0.8rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--accent-2);
+      background: var(--accent-soft);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .desktop-notif-row:hover {
+      background: rgba(255, 107, 0, 0.2);
+    }
+    .desktop-notif-row.granted {
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.12);
+      cursor: default;
+    }
+    .desktop-notif-row.denied {
+      color: var(--muted);
+      background: var(--hover);
+      cursor: default;
     }
     .dropdown-empty {
       text-align: center;
@@ -1923,7 +2000,7 @@
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 0.8rem 1rem;
+      padding: 0.8rem 2.4rem 0.8rem 1rem;
       border-radius: 9px;
       font-size: 0.9rem;
       outline: none;
@@ -1956,6 +2033,160 @@
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.03em;
+    }
+
+    /* ===== ARAMA KISAYOL İPUCU & KLAVYE YARDIM PANELİ ===== */
+    .hero-search-input-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+      display: flex;
+    }
+    .hero-search-input-wrap input {
+      width: 100%;
+    }
+    kbd {
+      font-family: 'Inter', sans-serif;
+    }
+    .search-kbd-hint {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--hover);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.1rem 0.4rem;
+      border-radius: 5px;
+      pointer-events: none;
+    }
+    .hero-search-input-wrap input:focus ~ .search-kbd-hint,
+    .hero-search-input-wrap input:not(:placeholder-shown) ~ .search-kbd-hint {
+      display: none;
+    }
+    .kbd-help-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--hover);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      z-index: 5;
+    }
+    .kbd-help-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: scale(1.05);
+    }
+    .kbd-help-panel {
+      display: none;
+      position: absolute;
+      top: 56px;
+      right: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      box-shadow: var(--shadow-lg);
+      z-index: 6;
+      min-width: 220px;
+      text-align: left;
+    }
+    .kbd-help-panel.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+    .kbd-help-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+    .kbd-help-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.45rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .kbd-help-row kbd {
+      background: var(--hover);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 5px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* ===== SON GÖRÜNTÜLENENLER ===== */
+    .recently-viewed-section {
+      display: none;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.2rem 1rem 0;
+    }
+    .recently-viewed-section.active {
+      display: block;
+    }
+    .recently-viewed-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .recently-viewed-row {
+      display: flex;
+      gap: 0.7rem;
+      overflow-x: auto;
+      padding-bottom: 0.6rem;
+      scrollbar-width: thin;
+    }
+    .rv-card {
+      flex-shrink: 0;
+      width: 150px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .rv-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .rv-card img {
+      width: 100%;
+      height: 84px;
+      object-fit: cover;
+      display: block;
+    }
+    .rv-card-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.4rem 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* ===== GÖRÜNÜM DEĞİŞTİRME ===== */
@@ -2150,6 +2381,7 @@
       <div>Belasco<span>Auto</span></div>
     </a>
     <div class="nav-links">
+      <button class="btn theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Tema değiştir">🌙</button>
       <button class="btn btn-admin" id="btnAdminPanel" onclick="openAdminModal()" style="display:none;">🛡️ Admin</button>
       <div class="icon-bell-wrapper" id="dmBellWrapper" style="display:none;">
         <button class="icon-bell-btn" onclick="toggleDmPanel(event)" title="Mesajlarım">✉️<span class="icon-bell-dot" id="dmBellDot">0</span></button>
@@ -2159,6 +2391,9 @@
         <button class="icon-bell-btn" onclick="toggleNotifPanel(event)" title="Bildirimler">🔔<span class="icon-bell-dot" id="notifBellDot">0</span></button>
         <div class="dropdown-panel" id="notifPanel">
           <div class="dropdown-panel-header"><strong>🔔 Bildirimler</strong><a onclick="markAllNotifsRead()">Tümünü okundu işaretle</a><a onclick="clearAllNotifs()" style="color:#ef4444;">🗑️ Temizle</a></div>
+          <div class="desktop-notif-row" id="desktopNotifRow" onclick="requestDesktopNotifPermission()">
+            <span id="desktopNotifRowText">🖥️ Masaüstü bildirimlerini aç</span>
+          </div>
           <div class="dropdown-panel-body" id="notifPanelBody"></div>
         </div>
       </div>
@@ -2180,7 +2415,10 @@
       <h1>Hayalindeki <span>modu</span> bul, aracını sat</h1>
       <p>BeamNG.drive için en büyük ilan pazarında binlerce vanilla ve modlu araç arasından seç, kendi ilanını dakikalar içinde yayınla.</p>
       <div class="hero-search-row">
-        <input type="text" id="heroSearch" placeholder="Örn: V8, Doğan, SUV..." oninput="document.getElementById('filterSearch').value=this.value; debouncedRenderAds();">
+        <div class="hero-search-input-wrap">
+          <input type="text" id="heroSearch" placeholder="Örn: V8, Doğan, SUV..." oninput="document.getElementById('filterSearch').value=this.value; debouncedRenderAds();">
+          <kbd class="search-kbd-hint">/</kbd>
+        </div>
         <button class="btn-post" onclick="checkAuthAndOpenPost()">+ İlan Ver</button>
       </div>
       <div class="hero-stats">
@@ -2189,6 +2427,20 @@
         <div><div class="num" id="heroStatModded">–</div><div class="lbl">Modlu Araç</div></div>
       </div>
     </div>
+    <button class="kbd-help-btn" onclick="toggleKbdHelp()" title="Klavye kısayolları">⌨️</button>
+    <div class="kbd-help-panel" id="kbdHelpPanel">
+      <div class="kbd-help-title">Klavye Kısayolları</div>
+      <div class="kbd-help-row"><kbd>/</kbd><span>Aramaya odaklan</span></div>
+      <div class="kbd-help-row"><kbd>G</kbd><span>İlan listesine git</span></div>
+      <div class="kbd-help-row"><kbd>N</kbd><span>Yeni ilan ver</span></div>
+      <div class="kbd-help-row"><kbd>Esc</kbd><span>Açık pencereyi kapat</span></div>
+    </div>
+  </div>
+
+  <!-- SON GÖRÜNTÜLENENLER -->
+  <div class="recently-viewed-section" id="recentlyViewedSection">
+    <div class="recently-viewed-title">🕘 Son Görüntülenenler</div>
+    <div class="recently-viewed-row" id="recentlyViewedRow"></div>
   </div>
 
   <!-- TOAST -->
@@ -2454,7 +2706,7 @@
   <!-- DETAY MODAL -->
   <div class="modal-overlay" id="detailModal">
     <div class="modal-content" style="max-width:900px;">
-      <div class="modal-header"><div><h3 id="detailTitle" style="font-size:1.1rem;">İlan Detayı</h3><span id="detailTimeAgo" style="font-size:.7rem;color:var(--muted);"></span><span id="detailViewCount" style="font-size:.7rem;color:var(--muted);margin-left:8px;">👁️ 0</span></div><button class="close-btn" onclick="closeDetailModal()">&times;</button></div>
+      <div class="modal-header"><div><h3 id="detailTitle" style="font-size:1.1rem;">İlan Detayı</h3><span id="detailTimeAgo" style="font-size:.7rem;color:var(--muted);"></span><span id="detailViewCount" style="font-size:.7rem;color:var(--muted);margin-left:8px;">👁️ 0</span></div><div style="display:flex;align-items:center;gap:0.5rem;"><button class="btn" id="shareAdBtn" onclick="shareCurrentAd()" title="İlan linkini kopyala">🔗 Linki Kopyala</button><button class="close-btn" onclick="closeDetailModal()">&times;</button></div></div>
       <div class="form-grid" style="align-items:start;">
         <div class="detail-gallery">
           <div style="position:relative;"><img id="detailMainImg" class="main-detail-img" src="" alt="Araç Görseli" onclick="openLightbox(currentGalleryIndex)" title="Tam boyutta incele"><button class="gallery-nav prev" onclick="navigateGallery(-1)">‹</button><button class="gallery-nav next" onclick="navigateGallery(1)">›</button></div>
@@ -2601,10 +2853,24 @@
     }
 
     // ----- CEZA -----
+    // Her açılışta tüm 'punishments' düğümünü tekrar tekrar çekmek yerine tek bir
+    // canlı dinleyici tutup bellekte önbelleklemek, ilan detayının her açılışında
+    // (ve giriş/canlı-ban kontrolünde) ağ gecikmesini ortadan kaldırır.
+    let punishmentsCache = null;
+    let punishmentsCacheListenerStarted = false;
+    function startPunishmentsCache() {
+      if (punishmentsCacheListenerStarted) return;
+      punishmentsCacheListenerStarted = true;
+      db.ref('punishments').on('value', snap => { punishmentsCache = snap.val() || {}; }, () => { punishmentsCache = punishmentsCache || {}; });
+    }
+
     async function checkUserPunishment(uid, uniqueName, punishType) {
       if (!uid && !uniqueName) return null;
-      const snap = await db.ref('punishments').once('value');
-      const pList = snap.val() || {};
+      let pList = punishmentsCache;
+      if (pList === null) {
+        const snap = await db.ref('punishments').once('value');
+        pList = snap.val() || {};
+      }
       const now = Date.now();
       for (const key in pList) {
         const p = pList[key];
@@ -3413,6 +3679,25 @@
       setViewMode(saved);
     })();
 
+    // ----- TEMA (AÇIK/KOYU) -----
+    function applyThemeButtonIcon() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      const btn = $('themeToggleBtn');
+      if (btn) btn.textContent = isLight ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        try { localStorage.setItem('siteTheme', 'dark'); } catch (e) {}
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        try { localStorage.setItem('siteTheme', 'light'); } catch (e) {}
+      }
+      applyThemeButtonIcon();
+    }
+    applyThemeButtonIcon();
+
     function renderDraftCard(ad) {
       const card = document.createElement('div');
       card.className = 'card';
@@ -3421,7 +3706,7 @@
       card.innerHTML = `
         <div class="card-img-wrapper">
           <div class="badge-stack-topleft"><div class="badge-pending" style="background:#6366f1;border-color:#6366f1;">📝 TASLAK</div></div>
-          <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title || 'Taslak')}" loading="lazy">
+          <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title || 'Taslak')}" loading="lazy" decoding="async">
         </div>
         <div class="card-body">
           <div class="card-title">${escapeHtml(ad.title || '(Başlıksız taslak)')}</div>
@@ -3459,7 +3744,7 @@
           <div class="badge-stack-topleft">${modBadge}${pertBadge}${pendingBadge}${hiddenBadge}</div>
           ${sellerTypeBadge}
           <button class="${favClass}" onclick="toggleFavorite(event,'${escapeHtml(ad.id)}')">${favIcon}</button>
-          <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title)}" loading="lazy">
+          <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title)}" loading="lazy" decoding="async">
         </div>
         <div class="card-body">
           <div class="card-meta-row">
@@ -3477,7 +3762,7 @@
             ${viewCount ? `<span class="tag">👁️ ${viewCount}</span>` : ''}
           </div>
           <div class="card-specs">
-            <div class="owner-line"><img class="mini-avatar" src="${ownerAvatarUrl}" alt="${escapeHtml(ownerName)}" loading="lazy">${escapeHtml(ownerName)}</div>
+            <div class="owner-line"><img class="mini-avatar" src="${ownerAvatarUrl}" alt="${escapeHtml(ownerName)}" loading="lazy" decoding="async">${escapeHtml(ownerName)}</div>
             <span class="card-arrow">→</span>
             <div class="card-cta">
               <span class="views">👁️ ${viewCount} görüntülenme</span>
@@ -3794,6 +4079,7 @@
       const ad = adsData.find(a => a.id === adId);
       if (!ad) return;
       currentSelectedAd = ad;
+      addToRecentlyViewed(ad);
       detailViewCounted = false;
       if (detailViewTimeout) clearTimeout(detailViewTimeout);
       detailViewTimeout = setTimeout(async () => {
@@ -3849,23 +4135,6 @@
       $('detailSellerAccountDate').textContent = "Yükleniyor...";
       $('detailSellerTypeBadge').textContent = ad.sellerType === 'bayi' ? '🏢 BAYİ' : '👤 SAHİBİNDEN';
       $('detailDmBtn').style.display = (currentUser && ad.ownerId === currentUser.uid) ? 'none' : 'flex';
-      if (ad.ownerId) {
-        try {
-          const snap = await db.ref('users/' + ad.ownerId).once('value');
-          const u = snap.val();
-          if (u) {
-            if (u.uniqueName) $('detailSellerUniqueName').textContent = '@' + u.uniqueName;
-            $('detailSellerName').innerHTML = escapeHtml(u.displayName || u.uniqueName) + (isUserAdmin(ad.ownerId, u.email, u) ? ' <span class="admin-tag">Admin</span>' : '');
-            $('detailSellerAccountDate').textContent = "Üyelik: " + (u.createdAt ? new Date(u.createdAt).toLocaleDateString('tr-TR') : '?');
-            renderPresenceRespectingBlocks(ad.ownerId, u, 'detailSellerOnlineDot', null);
-            const ban = await checkUserPunishment(ad.ownerId, u.uniqueName, "Hesap Askıya Alma");
-            if (ban) $('detailSellerName').innerHTML += ' <span class="banned-badge" style="font-size:0.55rem;">BANLANDI</span>';
-          }
-        } catch (e) {
-          console.warn('Satıcı bilgisi alınamadı (misafir modu olabilir):', e);
-          $('detailSellerAccountDate').textContent = '';
-        }
-      }
       const actionArea = $('detailOwnerActionArea');
       actionArea.innerHTML = '';
       if (currentUser && (ad.ownerId === currentUser.uid || isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile))) {
@@ -3876,12 +4145,122 @@
           <button onclick="deleteAd('${escapeHtml(ad.id)}')" class="btn-action btn-danger" style="font-size:0.8rem;text-align:center;">🗑️ İlanı Sil</button>
         `;
       }
+      // Modal, elde zaten var olan verilerle ANINDA açılır — satıcı profili (üyelik
+      // tarihi, canlı ban rozeti vb.) ağ isteği tamamlanana kadar arka planda
+      // güncellenir. Böylece açılış artık ağ gecikmesine bağlı değildir.
       $('detailModal').classList.add('active');
+      if (!(history.state && history.state.adId === adId)) {
+        history.pushState({ adId }, '', location.pathname + '?ad=' + encodeURIComponent(adId));
+      }
+      if (ad.ownerId) {
+        (async () => {
+          try {
+            const snap = await db.ref('users/' + ad.ownerId).once('value');
+            if (currentSelectedAdId !== adId) return; // kullanıcı bu sırada başka bir ilana geçmiş olabilir
+            const u = snap.val();
+            if (u) {
+              if (u.uniqueName) $('detailSellerUniqueName').textContent = '@' + u.uniqueName;
+              $('detailSellerName').innerHTML = escapeHtml(u.displayName || u.uniqueName) + (isUserAdmin(ad.ownerId, u.email, u) ? ' <span class="admin-tag">Admin</span>' : '');
+              $('detailSellerAccountDate').textContent = "Üyelik: " + (u.createdAt ? new Date(u.createdAt).toLocaleDateString('tr-TR') : '?');
+              renderPresenceRespectingBlocks(ad.ownerId, u, 'detailSellerOnlineDot', null);
+              const ban = await checkUserPunishment(ad.ownerId, u.uniqueName, "Hesap Askıya Alma");
+              if (currentSelectedAdId === adId && ban) $('detailSellerName').innerHTML += ' <span class="banned-badge" style="font-size:0.55rem;">BANLANDI</span>';
+            }
+          } catch (e) {
+            console.warn('Satıcı bilgisi alınamadı (misafir modu olabilir):', e);
+            if (currentSelectedAdId === adId) $('detailSellerAccountDate').textContent = '';
+          }
+        })();
+      }
     }
 
-    function closeDetailModal() { $('detailModal').classList.remove('active'); if (detailViewTimeout) clearTimeout(detailViewTimeout); }
+    function closeDetailModal() { $('detailModal').classList.remove('active'); if (detailViewTimeout) clearTimeout(detailViewTimeout); if (history.state && history.state.adId) history.pushState({}, '', location.pathname); }
 
-    // ----- GALERİ -----
+    async function shareCurrentAd() {
+      if (!currentSelectedAdId) return;
+      const url = location.origin + location.pathname + '?ad=' + encodeURIComponent(currentSelectedAdId);
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          const tmp = document.createElement('textarea');
+          tmp.value = url;
+          tmp.style.position = 'fixed';
+          tmp.style.opacity = '0';
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand('copy');
+          tmp.remove();
+        }
+        showToast('🔗 İlan linki kopyalandı!', 'success');
+      } catch (e) {
+        showToast('Link kopyalanamadı: ' + url, 'warning');
+      }
+    }
+
+    // Doğrudan ilan linkiyle açılan sayfalar için (ör. ?ad=xxxx)
+    function checkDeepLinkAd() {
+      const params = new URLSearchParams(location.search);
+      const adId = params.get('ad');
+      if (!adId) return;
+      const ad = adsData.find(a => a.id === adId);
+      if (ad) {
+        openDetailModal(adId);
+        history.replaceState({ adId }, '', location.pathname + '?ad=' + encodeURIComponent(adId));
+      }
+    }
+
+    // ----- SON GÖRÜNTÜLENENLER -----
+    const RECENTLY_VIEWED_KEY = 'recentlyViewedAds';
+    const RECENTLY_VIEWED_MAX = 10;
+
+    function getRecentlyViewed() {
+      try { return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]'); } catch (e) { return []; }
+    }
+
+    function addToRecentlyViewed(ad) {
+      if (!ad || !ad.id) return;
+      let list = getRecentlyViewed().filter(item => item.id !== ad.id);
+      const mainImg = (ad.images && ad.images.length) ? (ad.images[ad.thumbnailIndex || 0] || ad.images[0]) : '';
+      list.unshift({ id: ad.id, title: ad.title || '', img: mainImg || '' });
+      list = list.slice(0, RECENTLY_VIEWED_MAX);
+      try { localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(list)); } catch (e) {}
+      renderRecentlyViewed();
+    }
+
+    function renderRecentlyViewed() {
+      const section = $('recentlyViewedSection');
+      const row = $('recentlyViewedRow');
+      if (!section || !row) return;
+      const list = getRecentlyViewed();
+      if (!list.length) { section.classList.remove('active');
+        return; }
+      section.classList.add('active');
+      row.innerHTML = list.map(item => `
+        <div class="rv-card" onclick="openDetailModal('${escapeHtml(item.id)}')" title="${escapeHtml(item.title)}">
+          <img src="${escapeHtml(item.img || 'https://via.placeholder.com/150')}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async">
+          <div class="rv-card-title">${escapeHtml(item.title)}</div>
+        </div>
+      `).join('');
+    }
+
+    // ----- KLAVYE YARDIM PANELİ -----
+    function toggleKbdHelp(forceClose) {
+      const panel = $('kbdHelpPanel');
+      if (!panel) return;
+      if (forceClose === true) { panel.classList.remove('active');
+        return; }
+      panel.classList.toggle('active');
+    }
+    document.addEventListener('click', e => {
+      const panel = $('kbdHelpPanel');
+      const btn = e.target.closest ? e.target.closest('.kbd-help-btn') : null;
+      if (panel && panel.classList.contains('active') && !panel.contains(e.target) && !btn) {
+        toggleKbdHelp(true);
+      }
+    });
+
+
     function updateGalleryDisplay() {
       const main = $('detailMainImg');
       if (galleryImages.length) main.src = galleryImages[currentGalleryIndex] || galleryImages[0];
@@ -4229,7 +4608,8 @@
     // ----- BİLDİRİMLER -----
     function toggleNotifPanel(e) { if (e) e.stopPropagation();
       closeDmPanel();
-      $('notifPanel').classList.toggle('open'); if ($('notifPanel').classList.contains('open')) renderNotifPanel(); }
+      $('notifPanel').classList.toggle('open'); if ($('notifPanel').classList.contains('open')) { renderNotifPanel();
+        updateDesktopNotifRow(); } }
 
     function closeNotifPanel() { $('notifPanel').classList.remove('open'); }
 
@@ -4279,15 +4659,70 @@
       if (notifWatcherStarted || !currentUser) return;
       notifWatcherStarted = true;
       const uid = currentUser.uid;
+      let notifFirstSnapshot = true;
+      let seenNotifIds = new Set();
       db.ref('notifications/' + uid).on('value', snap => {
         const val = snap.val() || {};
         notificationsData = Object.entries(val).map(([k, v]) => ({ id: k, ...v })).sort((a, b) => b.timestamp - a.timestamp);
         renderNotifPanel();
+        if (notifFirstSnapshot) {
+          notifFirstSnapshot = false;
+          notificationsData.forEach(n => seenNotifIds.add(n.id));
+        } else {
+          notificationsData.forEach(n => {
+            if (!seenNotifIds.has(n.id)) {
+              seenNotifIds.add(n.id);
+              fireDesktopNotification(n);
+            }
+          });
+        }
       });
       db.ref('dmInbox/' + uid).on('value', snap => {
         dmInboxData = snap.val() || {};
         renderDmPanel();
       });
+    }
+
+    // ----- MASAÜSTÜ BİLDİRİMLERİ -----
+    function updateDesktopNotifRow() {
+      const row = $('desktopNotifRow');
+      const text = $('desktopNotifRowText');
+      if (!row || !text) return;
+      if (!('Notification' in window)) { row.style.display = 'none';
+        return; }
+      row.classList.remove('granted', 'denied');
+      if (Notification.permission === 'granted') {
+        row.classList.add('granted');
+        text.textContent = '✅ Masaüstü bildirimleri açık';
+      } else if (Notification.permission === 'denied') {
+        row.classList.add('denied');
+        text.textContent = '🔕 Bildirimler tarayıcıdan engellenmiş';
+      } else {
+        text.textContent = '🖥️ Masaüstü bildirimlerini aç';
+      }
+    }
+
+    async function requestDesktopNotifPermission() {
+      if (!('Notification' in window) || Notification.permission !== 'default') { updateDesktopNotifRow();
+        return; }
+      try {
+        const perm = await Notification.requestPermission();
+        updateDesktopNotifRow();
+        if (perm === 'granted') showToast('🔔 Masaüstü bildirimleri açıldı!', 'success');
+      } catch (e) {}
+    }
+
+    function fireDesktopNotification(n) {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      if (document.hasFocus()) return;
+      try {
+        const notif = new Notification('BelascoAuto ' + (n.icon || '🔔'), { body: n.text || 'Yeni bildirim', tag: 'belascoauto-' + n.id });
+        notif.onclick = () => {
+          window.focus();
+          notif.close();
+          handleNotifClick(n.id);
+        };
+      } catch (e) {}
     }
 
     // ----- HERKESE AÇIK PROFİL -----
@@ -4688,6 +5123,7 @@
         renderAds();
       }
     }, 30000);
+    let deepLinkChecked = false;
     db.ref('ads').on('value', snap => {
       const data = snap.val() || {};
       adsData = Object.entries(data).map(([k, v]) => ({ id: k, ...v })).reverse();
@@ -4696,16 +5132,31 @@
       adsLoadSlow = false;
       renderAds();
       updateDraftCountBadge();
+      if (!deepLinkChecked) { deepLinkChecked = true;
+        checkDeepLinkAd(); }
     }, err => {
       console.error("İlanlar yüklenirken hata oluştu:", err);
       adsLoadError = true;
       renderAds();
     });
 
+    window.addEventListener('popstate', () => {
+      const params = new URLSearchParams(location.search);
+      const adId = params.get('ad');
+      if (adId && adsData.find(a => a.id === adId)) {
+        openDetailModal(adId);
+      } else {
+        $('detailModal').classList.remove('active');
+      }
+    });
+
     // ----- BAŞLANGIÇ -----
     populateFilterBrands();
     toggleBrandList();
     populateEngineSelects();
+    renderRecentlyViewed();
+    updateDesktopNotifRow();
+    startPunishmentsCache();
 
     document.addEventListener('click', e => {
       if (!$('notifBellWrapper').contains(e.target)) closeNotifPanel();
@@ -4725,6 +5176,25 @@
         closeModConfirmModal();
         closeExternalLinkModal();
         closeReportModal();
+        closeAuthModal();
+        return;
+      }
+
+      // Bir input/textarea/select içindeyken veya bir modal açıkken kısayolları devre dışı bırak
+      const tag = (e.target.tagName || '').toLowerCase();
+      const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable;
+      const anyModalOpen = document.querySelector('.modal-overlay.active');
+      if (isTyping || anyModalOpen || document.body.classList.contains('banned-lockdown')) return;
+
+      if (e.key === '/') {
+        e.preventDefault();
+        const search = $('heroSearch') || $('filterSearch');
+        if (search) search.focus();
+      } else if (e.key.toLowerCase() === 'g' && !e.ctrlKey && !e.metaKey) {
+        const grid = $('listingsGrid');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (e.key.toLowerCase() === 'n' && !e.ctrlKey && !e.metaKey) {
+        checkAuthAndOpenPost();
       }
     });
 
