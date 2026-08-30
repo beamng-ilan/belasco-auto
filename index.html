@@ -802,48 +802,46 @@
       transform: scale(1.08);
     }
 
-    .badge-modded {
+    .badge-stack-topleft {
       position: absolute;
       top: 10px;
       left: 10px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .badge-modded {
       background: var(--mod);
       color: #fff;
       padding: 0.22rem 0.45rem;
       border-radius: 6px;
       font-size: 0.65rem;
       font-weight: 700;
-      z-index: 2;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     }
     .badge-pert {
-      position: absolute;
-      top: 10px;
-      left: 70px;
       background: var(--danger);
       color: #fff;
       padding: 0.22rem 0.45rem;
       border-radius: 6px;
       font-size: 0.65rem;
       font-weight: 700;
-      z-index: 2;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     }
     .badge-pending {
-      position: absolute;
-      top: 10px;
-      left: 10px;
       background: var(--pending);
       color: #000;
       padding: 0.22rem 0.45rem;
       border-radius: 6px;
       font-size: 0.65rem;
       font-weight: 700;
-      z-index: 2;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     }
     .badge-seller-type {
       position: absolute;
-      top: 10px;
+      bottom: 10px;
       right: 10px;
       background: rgba(15, 17, 21, 0.85);
       backdrop-filter: blur(4px);
@@ -970,14 +968,9 @@
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      background: var(--accent-grad);
-      color: #fff;
-      font-size: 0.6rem;
-      font-weight: 800;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      object-fit: cover;
       flex-shrink: 0;
+      border: 1px solid var(--border-soft);
     }
     .listings-grid:not(.list-view) .card-arrow {
       display: inline-flex;
@@ -1536,6 +1529,74 @@
       opacity: 0.8;
     }
 
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 1.75rem;
+      flex-wrap: wrap;
+    }
+    .page-btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 0.6rem;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .page-btn:hover:not(:disabled):not(.active) {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .page-btn.active {
+      background: var(--accent-grad);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(255, 107, 0, 0.25);
+      cursor: default;
+    }
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .page-ellipsis {
+      color: var(--muted);
+      padding: 0 0.2rem;
+      font-size: 0.85rem;
+      user-select: none;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      color: var(--muted);
+      grid-column: 1 / -1;
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .loading-state .loader-spinner {
+      width: 34px;
+      height: 34px;
+      border-width: 3px;
+    }
+    .loading-state h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
     .admin-tag {
       background: linear-gradient(135deg, #dc2626, #b91c1c);
       color: #fff;
@@ -1689,22 +1750,6 @@
     }
 
     /* ===== LOADER ===== */
-    #appLoader {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 99999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.1rem;
-      transition: opacity 0.35s ease;
-    }
-    #appLoader.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
     .loader-spinner {
       width: 44px;
       height: 44px;
@@ -1719,17 +1764,6 @@
       to {
         transform: rotate(360deg);
       }
-    }
-    .loader-text {
-      color: var(--text);
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-align: center;
-      padding: 0 1rem;
-    }
-    .loader-subtext {
-      color: var(--muted);
-      font-size: 0.8rem;
     }
 
     /* ===== CEZA / ASKIYA ALMA EKRANI ===== */
@@ -2078,13 +2112,6 @@
 </head>
 <body>
 
-  <!-- LOADER -->
-  <div id="appLoader">
-    <div class="loader-spinner"></div>
-    <div class="loader-text">Yükleniyor, lütfen bekleyiniz...</div>
-    <div class="loader-subtext">Bu işlem birkaç saniye sürebilir</div>
-  </div>
-
   <!-- CEZA / ASKIYA ALMA EKRANI -->
   <div id="banScreen">
     <div class="ban-box">
@@ -2198,6 +2225,7 @@
         </div>
       </div>
       <div class="listings-grid" id="listingsGrid"></div>
+      <div class="pagination" id="paginationControls"></div>
     </main>
   </div>
 
@@ -2488,7 +2516,8 @@
     let adminUidCache = null;
 
     const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=random&size=80";
-    const BEAMNG_BRANDS = ["Autobello", "Bruckell", "Cherrier", "Civetta", "ETK", "Gavril", "Hirochi", "Ibishu", "Soliad", "Wentward"];
+    const BEAMNG_BRANDS = ["Autobello", "Bruckell", "Burnside", "Cherrier", "Civetta", "ETK", "FPU", "Gavril", "Hirochi", "Ibishu", "Soliad", "SP", "Wentward"];
+    const MODDED_BRANDS = ["Acura", "Alfa Romeo", "Anadol", "Aston Martin", "Audi", "Bentley", "BMW", "Bugatti", "Buick", "BYD", "Cadillac", "Chevrolet", "Chrysler", "Citroën", "Dacia", "Daihatsu", "Devrim", "Dodge", "Ferrari", "Fiat", "Ford", "Genesis", "GMC", "Great Wall", "Honda", "Hyundai", "Infiniti", "Isuzu", "Jaguar", "Jeep", "Karsan", "Kia", "Lamborghini", "Land Rover", "Lexus", "Lincoln", "Maserati", "Mazda", "McLaren", "Mercedes-Benz", "MG", "Mini", "Mitsubishi", "Nissan", "Opel", "Otokar", "Peugeot", "Porsche", "Proton", "Renault", "Rolls-Royce", "Saab", "Seat", "Škoda", "SsangYong", "Subaru", "Suzuki", "Tesla", "Tofaş", "TOGG", "Toyota", "Volkswagen", "Volvo"];
     const ENGINE_SIZES = ["0.5L", "0.6L", "0.7L", "0.8L", "0.9L", "1.0L", "1.1L", "1.2L", "1.3L", "1.4L", "1.5L", "1.6L", "1.7L", "1.8L", "1.9L", "2.0L", "2.1L", "2.2L", "2.3L", "2.4L", "2.5L", "2.6L", "2.7L", "2.8L", "2.9L", "3.0L", "3.2L", "3.4L", "3.6L", "3.8L", "4.0L", "4.2L", "4.5L", "4.8L", "5.0L+", "Elektrikli"];
 
     // ----- STATE -----
@@ -2503,6 +2532,9 @@
     let isSubmittingAd = false;
     let showOnlyFavorites = false;
     let showOnlyDrafts = false;
+    const ADS_PER_PAGE = 24;
+    let currentAdsPage = 1;
+    let lastAdsFilterSignature = null;
     let notificationsData = [];
     let dmInboxData = {};
     let dmChatRef = null;
@@ -2521,6 +2553,8 @@
     let dmPeerWatchers = {};
     let firstAdsLoadDone = false;
     let firstAuthLoadDone = false;
+    let adsLoadError = false;
+    let adsLoadSlow = false;
 
     // ----- YARDIMCI FONKSİYONLAR (Önbelleklenmiş) -----
     const $ = (id) => document.getElementById(id);
@@ -2772,7 +2806,7 @@
       if (modLinkGroup) modLinkGroup.style.display = isModded ? 'block' : 'none';
       const cur = brandSel.value;
       brandSel.innerHTML = '';
-      const brands = isModded ? [...BEAMNG_BRANDS, "Anadol", "Audi", "BMW", "Chevrolet", "Devrim", "Fiat", "Ford", "Honda", "Hyundai", "Karsan", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Otokar", "Peugeot", "Porsche", "Renault", "Subaru", "Tofaş", "Toyota", "Volkswagen", "Volvo"].sort() : BEAMNG_BRANDS;
+      const brands = (isModded ? MODDED_BRANDS : BEAMNG_BRANDS).slice().sort();
       brands.forEach(b => { const o = document.createElement('option');
         o.value = b;
         o.textContent = b;
@@ -2783,7 +2817,7 @@
       const isModded = $('filterIsModded').checked;
       const sel = $('filterBrand');
       sel.innerHTML = '<option value="all">Tüm Markalar</option>';
-      const brands = isModded ? [...BEAMNG_BRANDS, "Anadol", "Audi", "BMW", "Chevrolet", "Devrim", "Fiat", "Ford", "Honda", "Hyundai", "Karsan", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Otokar", "Peugeot", "Porsche", "Renault", "Subaru", "Tofaş", "Toyota", "Volkswagen", "Volvo"].sort() : BEAMNG_BRANDS;
+      const brands = (isModded ? MODDED_BRANDS : BEAMNG_BRANDS).slice().sort();
       brands.forEach(b => { const o = document.createElement('option');
         o.value = b;
         o.textContent = b;
@@ -3211,6 +3245,20 @@
 
     function renderAds() {
       const grid = $('listingsGrid');
+      if (!firstAdsLoadDone) {
+        if (adsLoadError) {
+          grid.innerHTML = '<div class="loading-state"><span style="font-size:2rem;">⚠️</span><h3>İlanlar yüklenemedi</h3><p style="font-size:0.8rem;color:var(--muted);">Bağlantı sorunu olabilir.</p><button class="btn btn-action" onclick="location.reload()">🔄 Tekrar Dene</button></div>';
+          $('listingCount').textContent = 'Hata';
+        } else if (adsLoadSlow) {
+          grid.innerHTML = '<div class="loading-state"><div class="loader-spinner"></div><h3>İlanlar yükleniyor...</h3><p style="font-size:0.8rem;color:var(--muted);">Bu her zamankinden biraz uzun sürüyor, lütfen bekleyin.</p></div>';
+          $('listingCount').textContent = 'Yükleniyor...';
+        } else {
+          grid.innerHTML = '<div class="loading-state"><div class="loader-spinner"></div><h3>İlanlar yükleniyor...</h3></div>';
+          $('listingCount').textContent = 'Yükleniyor...';
+        }
+        if ($('paginationControls')) $('paginationControls').innerHTML = '';
+        return;
+      }
       const search = $('filterSearch').value.toLowerCase().trim();
       const fBrand = $('filterBrand').value;
       const fFuel = $('filterFuel').value;
@@ -3283,10 +3331,21 @@
 
       grid.innerHTML = '';
       $('listingCount').textContent = `${filtered.length} İlan`;
-      if (!filtered.length) { grid.innerHTML = '<div class="empty-state"><span>🔍</span><h3>İlan Bulunamadı</h3></div>'; return; }
+      if (!filtered.length) { grid.innerHTML = '<div class="empty-state"><span>🔍</span><h3>İlan Bulunamadı</h3></div>';
+        $('paginationControls').innerHTML = '';
+        return; }
+
+      const filterSignature = JSON.stringify([search, fBrand, fFuel, fYearMin, fYearMax, fEngine, fDamage, drive, trans, moddedStatus, sellerType, bodyType, weightMin, weightMax, sortType, showOnlyFavorites, showOnlyDrafts]);
+      if (filterSignature !== lastAdsFilterSignature) { currentAdsPage = 1;
+        lastAdsFilterSignature = filterSignature; }
+      const totalPages = Math.max(1, Math.ceil(filtered.length / ADS_PER_PAGE));
+      if (currentAdsPage > totalPages) currentAdsPage = totalPages;
+      if (currentAdsPage < 1) currentAdsPage = 1;
+      const pageStart = (currentAdsPage - 1) * ADS_PER_PAGE;
+      const pageItems = filtered.slice(pageStart, pageStart + ADS_PER_PAGE);
 
       const fragment = document.createDocumentFragment();
-      filtered.forEach(ad => {
+      pageItems.forEach(ad => {
         if (ad.isDraft) {
           const card = renderDraftCard(ad);
           fragment.appendChild(card);
@@ -3296,7 +3355,38 @@
         fragment.appendChild(card);
       });
       grid.appendChild(fragment);
+      renderAdsPagination(totalPages);
       updateHeroStats();
+    }
+
+    function renderAdsPagination(totalPages) {
+      const el = $('paginationControls');
+      if (!el) return;
+      if (totalPages <= 1) { el.innerHTML = '';
+        return; }
+      const pages = [];
+      const add = p => pages.push(p);
+      add(1);
+      for (let p = currentAdsPage - 1; p <= currentAdsPage + 1; p++) { if (p > 1 && p < totalPages) add(p); }
+      add(totalPages);
+      const unique = [...new Set(pages)].sort((a, b) => a - b);
+      let html = `<button class="page-btn" ${currentAdsPage === 1 ? 'disabled' : ''} onclick="goToAdsPage(${currentAdsPage - 1})" aria-label="Önceki sayfa">‹</button>`;
+      let prev = 0;
+      unique.forEach(p => {
+        if (p - prev > 1) html += `<span class="page-ellipsis">…</span>`;
+        html += `<button class="page-btn ${p === currentAdsPage ? 'active' : ''}" onclick="goToAdsPage(${p})">${p}</button>`;
+        prev = p;
+      });
+      html += `<button class="page-btn" ${currentAdsPage === totalPages ? 'disabled' : ''} onclick="goToAdsPage(${currentAdsPage + 1})" aria-label="Sonraki sayfa">›</button>`;
+      el.innerHTML = html;
+    }
+
+    function goToAdsPage(p) {
+      if (p < 1) return;
+      currentAdsPage = p;
+      renderAds();
+      const main = document.querySelector('main');
+      if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function updateHeroStats() {
@@ -3330,7 +3420,7 @@
       const mainImg = (ad.images && ad.images.length) ? (ad.images[ad.thumbnailIndex || 0] || ad.images[0]) : 'https://via.placeholder.com/400';
       card.innerHTML = `
         <div class="card-img-wrapper">
-          <div class="badge-pending" style="background:#6366f1;border-color:#6366f1;">📝 TASLAK</div>
+          <div class="badge-stack-topleft"><div class="badge-pending" style="background:#6366f1;border-color:#6366f1;">📝 TASLAK</div></div>
           <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title || 'Taslak')}" loading="lazy">
         </div>
         <div class="card-body">
@@ -3362,11 +3452,12 @@
       const favIcon = isFav ? '❤️' : '🤍';
       const viewCount = ad.views || 0;
       const ownerName = ad.ownerDisplayName || ad.ownerNickname || ad.ownerUniqueName || 'Anonim';
-      const ownerInitial = escapeHtml(ownerName.trim().charAt(0).toUpperCase() || 'A');
+      const ownerAvatarUrl = escapeHtml(ad.ownerAvatar || DEFAULT_AVATAR);
 
       card.innerHTML = `
         <div class="card-img-wrapper">
-          ${modBadge}${pertBadge}${pendingBadge}${hiddenBadge}${sellerTypeBadge}
+          <div class="badge-stack-topleft">${modBadge}${pertBadge}${pendingBadge}${hiddenBadge}</div>
+          ${sellerTypeBadge}
           <button class="${favClass}" onclick="toggleFavorite(event,'${escapeHtml(ad.id)}')">${favIcon}</button>
           <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title)}" loading="lazy">
         </div>
@@ -3386,7 +3477,7 @@
             ${viewCount ? `<span class="tag">👁️ ${viewCount}</span>` : ''}
           </div>
           <div class="card-specs">
-            <div class="owner-line"><span class="mini-avatar">${ownerInitial}</span>${escapeHtml(ownerName)}</div>
+            <div class="owner-line"><img class="mini-avatar" src="${ownerAvatarUrl}" alt="${escapeHtml(ownerName)}" loading="lazy">${escapeHtml(ownerName)}</div>
             <span class="card-arrow">→</span>
             <div class="card-cta">
               <span class="views">👁️ ${viewCount} görüntülenme</span>
@@ -4546,7 +4637,6 @@
           showBanLockdown(ban, user.uid);
           auth.signOut();
           firstAuthLoadDone = true;
-          hideAppLoaderIfReady();
           return;
         }
         $('userNicknameText').textContent = currentUserProfile.displayName || currentUserProfile.uniqueName;
@@ -4580,29 +4670,36 @@
       }
       renderAds();
       firstAuthLoadDone = true;
-      hideAppLoaderIfReady();
     });
 
     // ----- ADS LISTENER -----
-    function hideAppLoaderIfReady() {
-      if (firstAdsLoadDone && firstAuthLoadDone) {
-        const loader = $('appLoader');
-        if (loader) { loader.classList.add('hidden');
-          setTimeout(() => loader.remove(), 400); }
-      }
-    }
+    // İlanlar makul bir sürede gelmezse kullanıcıyı bilgilendir; gerçekten uzarsa
+    // (bağlantı sorunu vb.) yeniden deneme seçeneği sun. Bunlar sadece bilgilendirme
+    // amaçlıdır — asıl veri geldiğinde durum otomatik olarak düzelir.
     setTimeout(() => {
-      const loader = $('appLoader');
-      if (loader && !loader.classList.contains('hidden')) { loader.classList.add('hidden');
-        setTimeout(() => loader.remove(), 400); }
-    }, 8000);
+      if (!firstAdsLoadDone && !adsLoadError) {
+        adsLoadSlow = true;
+        renderAds();
+      }
+    }, 10000);
+    setTimeout(() => {
+      if (!firstAdsLoadDone) {
+        adsLoadError = true;
+        renderAds();
+      }
+    }, 30000);
     db.ref('ads').on('value', snap => {
       const data = snap.val() || {};
       adsData = Object.entries(data).map(([k, v]) => ({ id: k, ...v })).reverse();
+      firstAdsLoadDone = true;
+      adsLoadError = false;
+      adsLoadSlow = false;
       renderAds();
       updateDraftCountBadge();
-      firstAdsLoadDone = true;
-      hideAppLoaderIfReady();
+    }, err => {
+      console.error("İlanlar yüklenirken hata oluştu:", err);
+      adsLoadError = true;
+      renderAds();
     });
 
     // ----- BAŞLANGIÇ -----
