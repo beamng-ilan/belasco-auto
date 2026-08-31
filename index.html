@@ -15,6 +15,13 @@
   <title>BelascoAuto | BeamNG İlan Pazarı</title>
   <meta name="description" content="BelascoAuto - BeamNG.drive için en büyük ilan pazarı." />
   <link rel="canonical" href="https://belascoauto.com" />
+  <!-- Bağlantı ön-ısıtma: DNS/TLS kurulumunu erkenden başlatarak ilk yükleme süresini kısaltır -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://www.gstatic.com" />
+  <link rel="preconnect" href="https://beamng-ilan-default-rtdb.europe-west1.firebasedatabase.app" />
+  <link rel="dns-prefetch" href="https://beamng-ilan.firebasestorage.app" />
+  <link rel="dns-prefetch" href="https://ui-avatars.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -2340,8 +2347,165 @@
       }
     }
   </style>
+  <style>
+    /* =====================================================================
+       MOBİL DÜZELTMELERİ — sadece dar ekranları etkiler (max-width sorguları).
+       Masaüstündeki (min-width) stiller tamamen olduğu gibi kalır.
+       ===================================================================== */
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    @media (max-width: 640px) {
+      /* --- Header: sıkışık/karışık görünmesin diye kompaktlaştırma --- */
+      header {
+        padding: 0.6rem 0.7rem;
+        gap: 0.4rem;
+      }
+      .logo {
+        font-size: 1.05rem;
+        gap: 0.4rem;
+      }
+      .logo-icon {
+        width: 30px;
+        height: 30px;
+      }
+      .nav-links {
+        gap: 0.3rem;
+        justify-content: flex-end;
+      }
+      .nav-links .btn,
+      .nav-links .btn-post,
+      .nav-links .btn-admin {
+        padding: 0.4rem 0.55rem;
+        font-size: 0.72rem;
+        gap: 0.2rem;
+      }
+      #themeToggleBtn { padding: 0.4rem; }
+      .icon-bell-btn {
+        width: 34px;
+        height: 34px;
+      }
+      .user-badge {
+        padding: 0.2rem 0.45rem;
+      }
+      .user-badge #userNicknameText {
+        max-width: 70px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+      }
+      .favorites-compact {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      /* --- Bildirim/mesaj açılır panelleri ekranın dışına taşmasın --- */
+      .dropdown-panel {
+        position: fixed;
+        top: 60px;
+        left: 50%;
+        right: auto;
+        width: 94vw;
+        max-width: 94vw;
+        transform: translateX(-50%) translateY(-8px) scale(0.98);
+      }
+      .dropdown-panel.open {
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+
+      /* --- Modallar: kenarlara tam yapışmasın, iç boşluk azalsın --- */
+      .modal-content {
+        padding: 1rem;
+        border-radius: 12px;
+      }
+
+      /* --- Herhangi bir taşmayı garanti altına al --- */
+      .card, .modal-content, .dropdown-panel, table {
+        max-width: 100%;
+      }
+      img { max-width: 100%; height: auto; }
+    }
+
+    /* Filtreler mobilde/tablette kapalı başlasın, dokunulunca açılsın.
+       Bu eşik, .main-container'ın tek sütuna düştüğü nokta (900px) ile aynı. */
+    @media (max-width: 899px) {
+      .mobile-filters-toggle {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--card-2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        color: var(--text);
+        margin-bottom: 0;
+      }
+      .filters-sidebar > h3 { display: none; }
+      .filters-body { display: none; }
+      .filters-body.expanded { display: block; margin-top: 0.8rem; }
+      .filters-sidebar { padding: 0.8rem; }
+    }
+    .mobile-filters-toggle { display: none; }
+
+    @media (max-width: 380px) {
+      .nav-links .btn,
+      .nav-links .btn-post,
+      .nav-links .btn-admin {
+        padding: 0.35rem 0.45rem;
+        font-size: 0.68rem;
+      }
+      .logo div { font-size: 0.95rem; }
+    }
+  </style>
+  <style>
+    /* ===== EMBED GÖRÜNÜMÜ (?embed=ID ile açılan sayfalar) ===== */
+    #embedView { display: none; }
+    body.embed-mode {
+      background: var(--card) !important;
+      min-height: auto;
+    }
+    body.embed-mode > *:not(#embedView) { display: none !important; }
+    body.embed-mode #embedView { display: block; }
+    .embed-card {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text);
+      background: var(--card);
+    }
+    .embed-card img {
+      width: 96px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
+      background: var(--card-2);
+    }
+    .embed-card-info { min-width: 0; }
+    .embed-card-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .embed-card-meta { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .embed-card-cta { font-size: 0.72rem; color: var(--accent); font-weight: 700; margin-top: 6px; }
+    .embed-card-notfound { padding: 16px; color: var(--muted); font-size: 0.85rem; text-align: center; }
+  </style>
 </head>
 <body>
+
+  <div id="embedView"></div>
 
   <!-- CEZA / ASKIYA ALMA EKRANI -->
   <div id="banScreen">
@@ -2449,7 +2613,9 @@
   <!-- MAIN -->
   <div class="main-container">
     <aside class="filters-sidebar">
+      <button type="button" class="mobile-filters-toggle" onclick="toggleMobileFilters()">🔍 Gelişmiş Arama / Filtreler <span id="mobileFiltersChevron">▾</span></button>
       <h3 style="margin-bottom:1rem;font-size:1rem;">Gelişmiş Arama</h3>
+      <div id="filtersBody" class="filters-body">
       <div class="filter-group"><label>Kelime Ara</label><input type="text" id="filterSearch" class="filter-input" placeholder="Örn: V8, Doğan..." oninput="debouncedRenderAds()"></div>
       <div class="filter-group"><label>İlan Sahibi</label><select id="filterSellerType" class="filter-select" onchange="renderAds()"><option value="all">Tümü</option><option value="sahibinden">Sahibinden</option><option value="bayi">Bayi / Galeri</option></select></div>
       <div class="filter-group"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem;"><input type="checkbox" id="filterIsModded" style="width:16px;height:16px;cursor:pointer;" onchange="populateFilterBrands()"><label for="filterIsModded" style="margin-bottom:0;cursor:pointer;">Modlu Markalar</label></div><label>Marka</label><select id="filterBrand" class="filter-select" onchange="renderAds()"><option value="all">Tüm Markalar</option></select></div>
@@ -2464,6 +2630,7 @@
       <div class="filter-group"><label>Araç Durumu</label><select id="filterModdedStatus" class="filter-select" onchange="renderAds()"><option value="all">Tümü (Vanilla + Modlu)</option><option value="vanilla">Sadece Orijinal (Vanilla)</option><option value="modded">Sadece Modlu Araçlar</option></select></div>
       <button onclick="resetFilters()" class="btn btn-action" style="justify-content:center;margin-bottom:.8rem;">Filtreleri Sıfırla</button>
       <div class="tutorial-box"><h4>📘 .pc Dosyası Yükleme Öğreticisi</h4><p><strong>.pc Dosyası Nedir?</strong><br>BeamNG.drive oyununda araç ayarlarını içeren kayıt dosyasıdır.</p><p style="margin-top:.4rem;"><strong>Nasıl Yüklenir?</strong><br>1. <code>.pc</code> dosyasını indirin.<br>2. <code>AppData/Local/BeamNG.drive/vehicles/</code> klasörüne atın.</p></div>
+      </div>
     </aside>
     <main>
       <div class="content-header">
@@ -2665,6 +2832,19 @@
     </div>
   </div>
 
+  <!-- EMBED KODU -->
+  <div class="modal-overlay" id="embedCodeModal" style="z-index:1050;">
+    <div class="modal-content" style="max-width:480px;">
+      <div class="modal-header"><h3>🖼️ Embed Kodu</h3><button class="close-btn" onclick="$('embedCodeModal').classList.remove('active')">&times;</button></div>
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:.8rem;">Bu kodu kendi sitene / forum mesajına yapıştırarak ilanı küçük bir kart olarak gösterebilirsin.</p>
+      <textarea id="embedCodeBox" class="filter-input" readonly style="height:90px;resize:vertical;font-family:monospace;font-size:.75rem;margin-bottom:.8rem;" onclick="this.select()"></textarea>
+      <div style="display:flex;gap:.6rem;">
+        <button class="btn-action btn-primary" style="flex:1;text-align:center;" onclick="copyEmbedCode()">📋 Kodu Kopyala</button>
+        <a id="embedCodePreviewLink" href="#" target="_blank" rel="noopener" class="btn-action btn" style="flex:1;text-align:center;">👁️ Önizle</a>
+      </div>
+    </div>
+  </div>
+
   <!-- İLAN VERME / DÜZENLEME -->
   <div class="modal-overlay" id="postModal">
     <div class="modal-content">
@@ -2706,7 +2886,7 @@
   <!-- DETAY MODAL -->
   <div class="modal-overlay" id="detailModal">
     <div class="modal-content" style="max-width:900px;">
-      <div class="modal-header"><div><h3 id="detailTitle" style="font-size:1.1rem;">İlan Detayı</h3><span id="detailTimeAgo" style="font-size:.7rem;color:var(--muted);"></span><span id="detailViewCount" style="font-size:.7rem;color:var(--muted);margin-left:8px;">👁️ 0</span></div><div style="display:flex;align-items:center;gap:0.5rem;"><button class="btn" id="shareAdBtn" onclick="shareCurrentAd()" title="İlan linkini kopyala">🔗 Linki Kopyala</button><button class="close-btn" onclick="closeDetailModal()">&times;</button></div></div>
+      <div class="modal-header"><div><h3 id="detailTitle" style="font-size:1.1rem;">İlan Detayı</h3><span id="detailTimeAgo" style="font-size:.7rem;color:var(--muted);"></span><span id="detailViewCount" style="font-size:.7rem;color:var(--muted);margin-left:8px;">👁️ 0</span></div><div style="display:flex;align-items:center;gap:0.5rem;"><button class="btn" id="shareAdBtn" onclick="shareCurrentAd()" title="İlan linkini kopyala">🔗 Linki Kopyala</button><button class="btn" onclick="showEmbedCode(currentSelectedAdId)" title="Başka bir siteye gömülebilir kod al">🖼️ Embed Kodu</button><button class="close-btn" onclick="closeDetailModal()">&times;</button></div></div>
       <div class="form-grid" style="align-items:start;">
         <div class="detail-gallery">
           <div style="position:relative;"><img id="detailMainImg" class="main-detail-img" src="" alt="Araç Görseli" onclick="openLightbox(currentGalleryIndex)" title="Tam boyutta incele"><button class="gallery-nav prev" onclick="navigateGallery(-1)">‹</button><button class="gallery-nav next" onclick="navigateGallery(1)">›</button></div>
@@ -2772,6 +2952,22 @@
     const MODDED_BRANDS = ["Acura", "Alfa Romeo", "Anadol", "Aston Martin", "Audi", "Bentley", "BMW", "Bugatti", "Buick", "BYD", "Cadillac", "Chevrolet", "Chrysler", "Citroën", "Dacia", "Daihatsu", "Devrim", "Dodge", "Ferrari", "Fiat", "Ford", "Genesis", "GMC", "Great Wall", "Honda", "Hyundai", "Infiniti", "Isuzu", "Jaguar", "Jeep", "Karsan", "Kia", "Lamborghini", "Land Rover", "Lexus", "Lincoln", "Maserati", "Mazda", "McLaren", "Mercedes-Benz", "MG", "Mini", "Mitsubishi", "Nissan", "Opel", "Otokar", "Peugeot", "Porsche", "Proton", "Renault", "Rolls-Royce", "Saab", "Seat", "Škoda", "SsangYong", "Subaru", "Suzuki", "Tesla", "Tofaş", "TOGG", "Toyota", "Volkswagen", "Volvo"];
     const ENGINE_SIZES = ["0.5L", "0.6L", "0.7L", "0.8L", "0.9L", "1.0L", "1.1L", "1.2L", "1.3L", "1.4L", "1.5L", "1.6L", "1.7L", "1.8L", "1.9L", "2.0L", "2.1L", "2.2L", "2.3L", "2.4L", "2.5L", "2.6L", "2.7L", "2.8L", "2.9L", "3.0L", "3.2L", "3.4L", "3.6L", "3.8L", "4.0L", "4.2L", "4.5L", "4.8L", "5.0L+", "Elektrikli"];
 
+    // ----- KISA LİNK / EMBED TESPİTİ -----
+    // İlan linkleri artık "#123" (kısa ID) formatında — eski "?ad=123" linkleri de
+    // geriye dönük çalışmaya devam eder. Ayrı bir "?embed=" link sistemi yerine,
+    // aynı ilan linki bir <iframe> içinde açıldığında otomatik olarak kompakt
+    // embed kartına dönüşür (bkz. IS_EMBEDDED_FRAME).
+    function getAdIdFromUrl() {
+      const hashId = (location.hash || '').replace(/^#/, '').trim();
+      if (hashId) return hashId;
+      return new URLSearchParams(location.search).get('ad');
+    }
+    const IS_EMBEDDED_FRAME = (function () {
+      try { return window.self !== window.top; } catch (e) { return true; }
+    })();
+    const EMBED_AD_PARAM = IS_EMBEDDED_FRAME ? getAdIdFromUrl() : null;
+    if (EMBED_AD_PARAM) document.body.classList.add('embed-mode');
+
     // ----- STATE -----
     let currentUser = null;
     let currentUserProfile = { uniqueName: "", displayName: "", avatar: DEFAULT_AVATAR, favorites: [], blockedUsers: [], nameChangeUsed: false, email: "", emailVerified: false };
@@ -2784,7 +2980,7 @@
     let isSubmittingAd = false;
     let showOnlyFavorites = false;
     let showOnlyDrafts = false;
-    const ADS_PER_PAGE = 24;
+    const ADS_PER_PAGE = 8;
     let currentAdsPage = 1;
     let lastAdsFilterSignature = null;
     let notificationsData = [];
@@ -3145,6 +3341,13 @@
       const favs = currentUserProfile.favorites || [];
       $('favCountBadge').textContent = favs.length;
       $('btnToggleFavorites').style.display = currentUser ? 'flex' : 'none';
+    }
+    function toggleMobileFilters() {
+      const body=document.getElementById('filtersBody');
+      const chevron=document.getElementById('mobileFiltersChevron');
+      if (!body) return;
+      body.classList.toggle('expanded');
+      if (chevron) chevron.textContent = body.classList.contains('expanded') ? '▴' : '▾';
     }
     function toggleFavoritesFilter() {
       showOnlyFavorites = !showOnlyFavorites;
@@ -3702,7 +3905,7 @@
       const card = document.createElement('div');
       card.className = 'card';
       card.style.opacity = '0.85';
-      const mainImg = (ad.images && ad.images.length) ? (ad.images[ad.thumbnailIndex || 0] || ad.images[0]) : 'https://via.placeholder.com/400';
+      const mainImg = (ad.images && ad.images.length) ? (ad.images[ad.thumbnailIndex || 0] || ad.images[0]) : 'https://placehold.co/400';
       card.innerHTML = `
         <div class="card-img-wrapper">
           <div class="badge-stack-topleft"><div class="badge-pending" style="background:#6366f1;border-color:#6366f1;">📝 TASLAK</div></div>
@@ -3731,7 +3934,7 @@
       const pendingBadge = ad.approved === false ? '<div class="badge-pending">⏳ ONAY BEKLİYOR</div>' : '';
       const hiddenBadge = ad.isHidden ? '<div class="badge-pending" style="background:#57534e;border-color:#78716c;">🔒 GİZLİ</div>' : '';
       const sellerTypeBadge = ad.sellerType === 'bayi' ? '<div class="badge-seller-type">🏢 BAYİ</div>' : '<div class="badge-seller-type" style="background:rgba(34,197,94,0.2);border-color:#22c55e;">👤 SAHİBİNDEN</div>';
-      const mainImg = (ad.images && ad.images.length) ? (ad.images[ad.thumbnailIndex || 0] || ad.images[0]) : 'https://via.placeholder.com/400';
+      const mainImg = (ad.images && ad.images.length) ? (ad.images[ad.thumbnailIndex || 0] || ad.images[0]) : 'https://placehold.co/400';
       const isFav = userFavs.includes(ad.id);
       const favClass = isFav ? 'favorite-btn active' : 'favorite-btn';
       const favIcon = isFav ? '❤️' : '🤍';
@@ -3913,6 +4116,29 @@
       closePostModal();
     }
 
+    // ===== KISA İLAN LİNKİ SİSTEMİ =====
+    // Firebase push key'leri (~20 karakter) yerine kısa, artan sayısal bir kimlik üretir.
+    async function getNextAdShortId() {
+      try {
+        const ref = db.ref('counters/adShortId');
+        const result = await ref.transaction(current => (current || 0) + 1);
+        return result.committed ? result.snapshot.val() : null;
+      } catch (e) { console.warn('Kısa ID üretilemedi:', e); return null; }
+    }
+    // Eski ilanlara (henüz shortId'si olmayanlara) ilk açılış/paylaşımda geriye dönük kısa ID atar.
+    async function ensureAdShortId(ad) {
+      if (ad.shortId) return ad.shortId;
+      const sid = await getNextAdShortId();
+      if (sid) {
+        try { await db.ref('ads/' + ad.id + '/shortId').set(sid); ad.shortId = sid; } catch (e) {}
+      }
+      return ad.shortId || null;
+    }
+    function buildAdUrl(ad) {
+      const idPart = ad.shortId ? String(ad.shortId) : encodeURIComponent(ad.id);
+      return location.origin + location.pathname + '#' + idPart;
+    }
+
     async function handleSaveAd(e) {
       e.preventDefault();
       if (isSubmittingAd) return;
@@ -3938,6 +4164,8 @@
         } else {
           payload.createdAt = Date.now();
           const ref = db.ref('ads').push();
+          const sid = await getNextAdShortId();
+          if (sid) payload.shortId = sid;
           await ref.set(payload);
           showToast("⏳ İlan oluşturuldu, onay bekliyor.", 'success');
           notifyAdmins('admin_new_ad', `Yeni ilan: ${payload.title}`, '📢', { adId: ref.key });
@@ -3989,7 +4217,9 @@
       if (!ad.images || !ad.images.length) { showToast("Yayınlamadan önce ✏️ Düzenle'ye basıp en az bir fotoğraf ekleyin.", 'warning'); return; }
       if (!confirm("Bu taslağı yayınlamak istiyor musunuz? Yayınlandıktan sonra admin onayına düşecek.")) return;
       try {
-        await db.ref('ads/' + adId).update({ isDraft: false, approved: false, createdAt: Date.now() });
+        const updates = { isDraft: false, approved: false, createdAt: Date.now() };
+        if (!ad.shortId) { const sid = await getNextAdShortId(); if (sid) updates.shortId = sid; }
+        await db.ref('ads/' + adId).update(updates);
         showToast("⏳ İlan yayınlandı, admin onayı bekleniyor.", 'success');
         notifyAdmins('admin_new_ad', `Yeni ilan: ${ad.title}`, '📢', { adId });
       } catch (e) { showToast("Hata: " + e.message, 'error'); }
@@ -4100,7 +4330,7 @@
       $('detailTitle').textContent = ad.title;
       $('detailTimeAgo').textContent = `Yayınlanma: ${timeAgo(ad.createdAt)}`;
       $('detailViewCount').textContent = `👁️ ${ad.views || 0}`;
-      galleryImages = ad.images || ['https://via.placeholder.com/400'];
+      galleryImages = ad.images || ['https://placehold.co/400'];
       currentGalleryIndex = ad.thumbnailIndex || 0;
       updateGalleryDisplay();
       const pcArea = $('detailPcArea');
@@ -4150,7 +4380,9 @@
       // güncellenir. Böylece açılış artık ağ gecikmesine bağlı değildir.
       $('detailModal').classList.add('active');
       if (!(history.state && history.state.adId === adId)) {
-        history.pushState({ adId }, '', location.pathname + '?ad=' + encodeURIComponent(adId));
+        const urlPart = ad.shortId ? String(ad.shortId) : encodeURIComponent(adId);
+        history.pushState({ adId }, '', location.pathname + '#' + urlPart);
+        if (!ad.shortId) ensureAdShortId(ad); // arka planda kısa ID ata, sonraki paylaşımlar kısa olsun
       }
       if (ad.ownerId) {
         (async () => {
@@ -4176,9 +4408,65 @@
 
     function closeDetailModal() { $('detailModal').classList.remove('active'); if (detailViewTimeout) clearTimeout(detailViewTimeout); if (history.state && history.state.adId) history.pushState({}, '', location.pathname); }
 
+    function renderEmbedView(raw) {
+      const el = document.getElementById('embedView');
+      if (!el) return;
+      let ad = /^\d+$/.test(raw) ? adsData.find(a => String(a.shortId) === raw) : null;
+      if (!ad) ad = adsData.find(a => a.id === raw);
+      if (!ad || ad.isDraft || (ad.isHidden && true) || ad.approved === false) {
+        el.innerHTML = '<div class="embed-card-notfound">İlan bulunamadı veya artık mevcut değil.</div>';
+        return;
+      }
+      const img = (ad.images && ad.images.length) ? (ad.images[ad.thumbnailIndex || 0] || ad.images[0]) : 'https://placehold.co/200x150';
+      const fullUrl = buildAdUrl(ad);
+      el.innerHTML = `
+        <a class="embed-card" href="${escapeHtml(fullUrl)}" target="_blank" rel="noopener">
+          <img src="${escapeHtml(img)}" alt="" loading="lazy" decoding="async">
+          <div class="embed-card-info">
+            <div class="embed-card-title">${escapeHtml(ad.title || 'İlan')}</div>
+            <div class="embed-card-meta">${ad.year || ''}${ad.year ? ' • ' : ''}${(ad.km || 0).toLocaleString('tr-TR')} km${ad.hp ? ' • ' + ad.hp + ' HP' : ''}</div>
+            <div class="embed-card-cta">🚗 BelascoAuto'da görüntüle →</div>
+          </div>
+        </a>
+      `;
+    }
+
+    function showEmbedCode(adId) {
+      const ad = adsData.find(a => a.id === adId);
+      if (!ad) return;
+      (async () => {
+        if (!ad.shortId) await ensureAdShortId(ad);
+        // Embed linki artık normal ilan linkiyle birebir aynı: sayfa bir <iframe>
+        // içinde açıldığını kendisi algılayıp (IS_EMBEDDED_FRAME) kompakt kart
+        // görünümüne geçiyor — ayrı bir "?embed=" adresine gerek yok.
+        const embedUrl = buildAdUrl(ad);
+        const code = `<iframe src="${embedUrl}" width="360" height="110" style="border:1px solid #2a2e37;border-radius:12px;" loading="lazy"></iframe>`;
+        const box = $('embedCodeBox');
+        if (box) box.value = code;
+        const preview = $('embedCodePreviewLink');
+        if (preview) preview.href = embedUrl;
+        $('embedCodeModal').classList.add('active');
+      })();
+    }
+
+    async function copyEmbedCode() {
+      const box = $('embedCodeBox');
+      if (!box) return;
+      try {
+        await navigator.clipboard.writeText(box.value);
+        showToast('📋 Embed kodu kopyalandı!', 'success');
+      } catch (e) {
+        box.select();
+        document.execCommand('copy');
+        showToast('📋 Embed kodu kopyalandı!', 'success');
+      }
+    }
+
     async function shareCurrentAd() {
       if (!currentSelectedAdId) return;
-      const url = location.origin + location.pathname + '?ad=' + encodeURIComponent(currentSelectedAdId);
+      const ad = adsData.find(a => a.id === currentSelectedAdId);
+      if (ad && !ad.shortId) await ensureAdShortId(ad);
+      const url = ad ? buildAdUrl(ad) : (location.origin + location.pathname + '#' + encodeURIComponent(currentSelectedAdId));
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(url);
@@ -4198,15 +4486,16 @@
       }
     }
 
-    // Doğrudan ilan linkiyle açılan sayfalar için (ör. ?ad=xxxx)
+    // Doğrudan ilan linkiyle açılan sayfalar için (ör. #482 kısa ID, eski ?ad= linki veya eski uzun ID)
     function checkDeepLinkAd() {
-      const params = new URLSearchParams(location.search);
-      const adId = params.get('ad');
-      if (!adId) return;
-      const ad = adsData.find(a => a.id === adId);
+      const raw = getAdIdFromUrl();
+      if (!raw) return;
+      let ad = /^\d+$/.test(raw) ? adsData.find(a => String(a.shortId) === raw) : null;
+      if (!ad) ad = adsData.find(a => a.id === raw);
       if (ad) {
-        openDetailModal(adId);
-        history.replaceState({ adId }, '', location.pathname + '?ad=' + encodeURIComponent(adId));
+        openDetailModal(ad.id);
+        const urlPart = ad.shortId ? String(ad.shortId) : encodeURIComponent(ad.id);
+        history.replaceState({ adId: ad.id }, '', location.pathname + '#' + urlPart);
       }
     }
 
@@ -4238,7 +4527,7 @@
       section.classList.add('active');
       row.innerHTML = list.map(item => `
         <div class="rv-card" onclick="openDetailModal('${escapeHtml(item.id)}')" title="${escapeHtml(item.title)}">
-          <img src="${escapeHtml(item.img || 'https://via.placeholder.com/150')}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async">
+          <img src="${escapeHtml(item.img || 'https://placehold.co/150')}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async">
           <div class="rv-card-title">${escapeHtml(item.title)}</div>
         </div>
       `).join('');
@@ -4347,7 +4636,7 @@
           const row = document.createElement('div');
           row.className = `chat-msg-row ${isOwn ? 'is-own' : ''}`;
           row.innerHTML = `
-            <img src="${escapeHtml(m.senderAvatar || DEFAULT_AVATAR)}" class="chat-avatar" style="cursor:pointer;" onclick="openPublicProfile('${escapeHtml(m.senderUid || '')}')">
+            <img src="${escapeHtml(m.senderAvatar || DEFAULT_AVATAR)}" class="chat-avatar" style="cursor:pointer;" loading="lazy" decoding="async" onclick="openPublicProfile('${escapeHtml(m.senderUid || '')}')">
             <div class="chat-bubble-col">
               <div class="chat-meta"><span class="chat-sender-name">${escapeHtml(m.senderName)}${isSenderAdmin ? ' <span class="admin-tag">Admin</span>' : ''}</span><span class="chat-time">${timeAgo(m.timestamp)}</span></div>
               <div class="chat-bubble">${escapeHtml(m.text)}</div>
@@ -4505,7 +4794,7 @@
         row.className = `chat-msg-row ${isOwn ? 'is-own' : ''}`;
         const seenLabel = (isOwn && k === lastOwnKey && dmPeerLastReadTs >= (m.timestamp || 0)) ? '<div class="dm-seen-label" style="font-size:.65rem;color:var(--muted);text-align:right;margin-top:2px;">Görüldü ✓✓</div>' : '';
         row.innerHTML = `
-          <img src="${escapeHtml(m.senderAvatar || DEFAULT_AVATAR)}" class="chat-avatar" style="cursor:pointer;" onclick="openPublicProfile('${escapeHtml(m.senderUid || '')}')">
+          <img src="${escapeHtml(m.senderAvatar || DEFAULT_AVATAR)}" class="chat-avatar" style="cursor:pointer;" loading="lazy" decoding="async" onclick="openPublicProfile('${escapeHtml(m.senderUid || '')}')">
           <div class="chat-bubble-col">
             <div class="chat-meta"><span class="chat-sender-name">${escapeHtml(m.senderName)}${isSenderAdmin ? ' <span class="admin-tag">Admin</span>' : ''}</span><span class="chat-time">${timeAgo(m.timestamp)}</span></div>
             <div class="chat-bubble">${escapeHtml(m.text)}</div>
@@ -4598,7 +4887,7 @@
       if (!threads.length) { body.innerHTML = '<div class="dropdown-empty"><span class="icon">✉️</span>Henüz mesajınız yok.</div>'; return; }
       body.innerHTML = threads.map(t => `
         <div class="dm-item" onclick="startDmWithUid('${escapeHtml(t.uid)}')">
-          <div class="avatar-wrap"><img src="${escapeHtml(t.avatar || DEFAULT_AVATAR)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;"></div>
+          <div class="avatar-wrap"><img src="${escapeHtml(t.avatar || DEFAULT_AVATAR)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" loading="lazy" decoding="async"></div>
           <div class="info"><div class="t">${escapeHtml(t.displayName || 'Kullanıcı')}</div><div class="s">${escapeHtml(t.lastMessage || '')}</div></div>
           ${t.unreadCount ? `<span class="unread-badge">${t.unreadCount}</span>` : ''}
         </div>
@@ -4752,7 +5041,7 @@
         if (!userAds.length) list.innerHTML = '<div style="color:var(--muted);font-size:0.75rem;text-align:center;padding:0.5rem;">Aktif ilanı yok.</div>';
         else list.innerHTML = userAds.map(ad => `
           <div onclick="closePublicProfileModal(); openDetailModal('${escapeHtml(ad.id)}')" style="display:flex;align-items:center;gap:8px;padding:6px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--bg);">
-            <img src="${escapeHtml((ad.images && ad.images[ad.thumbnailIndex || 0]) || 'https://via.placeholder.com/60')}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;">
+            <img src="${escapeHtml((ad.images && ad.images[ad.thumbnailIndex || 0]) || 'https://placehold.co/60')}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;" loading="lazy" decoding="async">
             <div style="font-size:0.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(ad.title)}</div>
           </div>
         `).join('');
@@ -5132,6 +5421,7 @@
       adsLoadSlow = false;
       renderAds();
       updateDraftCountBadge();
+      if (EMBED_AD_PARAM) { renderEmbedView(EMBED_AD_PARAM); }
       if (!deepLinkChecked) { deepLinkChecked = true;
         checkDeepLinkAd(); }
     }, err => {
@@ -5141,10 +5431,11 @@
     });
 
     window.addEventListener('popstate', () => {
-      const params = new URLSearchParams(location.search);
-      const adId = params.get('ad');
-      if (adId && adsData.find(a => a.id === adId)) {
-        openDetailModal(adId);
+      const raw = getAdIdFromUrl();
+      let ad = raw && /^\d+$/.test(raw) ? adsData.find(a => String(a.shortId) === raw) : null;
+      if (!ad && raw) ad = adsData.find(a => a.id === raw);
+      if (ad) {
+        openDetailModal(ad.id);
       } else {
         $('detailModal').classList.remove('active');
       }
