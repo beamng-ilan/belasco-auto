@@ -4191,6 +4191,12 @@
         btn.disabled = false;
         btn.textContent = "🚀 İlanı Yayınla"; return; }
       const payload = { ...readCommonAdFields(), approved: false, isDraft: false, favorites: 0, views: 0 };
+      // Düzenleme sırasında ilan sahibi bilgilerini işlemi yapan kişiye (ör. admin)
+      // göre DEĞİŞTİRME — orijinal sahip korunmalı.
+      if (editingAdId) { delete payload.ownerId;
+        delete payload.ownerDisplayName;
+        delete payload.ownerUniqueName;
+        delete payload.ownerAvatar; }
       if (pcResult.pcData) { payload.pcFile = pcResult.pcData;
         payload.pcFileName = pcResult.pcName; }
       try {
@@ -4228,6 +4234,10 @@
         draftBtn.disabled = false;
         draftBtn.textContent = originalText; return; }
       const payload = { ...readCommonAdFields(), isDraft: true, favorites: 0, views: 0, updatedAt: Date.now() };
+      if (editingAdId) { delete payload.ownerId;
+        delete payload.ownerDisplayName;
+        delete payload.ownerUniqueName;
+        delete payload.ownerAvatar; }
       if (pcResult.pcData) { payload.pcFile = pcResult.pcData;
         payload.pcFileName = pcResult.pcName; }
       try {
