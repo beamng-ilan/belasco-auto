@@ -1810,31 +1810,30 @@
       }
     }
 
-    /* ===== AKTİF KULLANICILAR ===== */
-    .active-users-widget {
-      position: fixed;
-      left: 16px;
-      bottom: 16px;
-      z-index: 500;
-      background: rgba(20, 22, 27, 0.92);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      max-width: 240px;
-      overflow: hidden;
+    /* ===== AKTİF KULLANICILAR (sayfaya gömülü şerit, header altında) ===== */
+    .active-users-bar {
+      background: var(--card-bg, rgba(255,255,255,0.03));
+      border-bottom: 1px solid var(--border-soft);
+      padding: 10px 1rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
       animation: fadeIn 0.4s ease;
     }
-    .active-users-header {
+    @media(min-width:768px) {
+      .active-users-bar {
+        padding: 10px 2rem;
+      }
+    }
+    .active-users-label {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 14px;
-      cursor: pointer;
-      user-select: none;
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--text);
+      flex-shrink: 0;
     }
     .active-users-dot {
       width: 8px;
@@ -1846,69 +1845,54 @@
       animation: bellPulse 2s infinite;
     }
     .active-users-count {
-      margin-left: auto;
       color: var(--muted);
       font-weight: 500;
       font-size: 0.75rem;
     }
-    .active-users-toggle-icon {
-      font-size: 0.65rem;
-      color: var(--muted);
-      transition: transform 0.2s ease;
-    }
-    .active-users-widget.open .active-users-toggle-icon {
-      transform: rotate(180deg);
-    }
     .active-users-list {
-      max-height: 0;
-      overflow-y: auto;
-      transition: max-height 0.25s ease;
-      border-top: 1px solid transparent;
-    }
-    .active-users-widget.open .active-users-list {
-      max-height: 220px;
-      border-top: 1px solid var(--border);
-    }
-    .active-user-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 14px;
-      font-size: 0.78rem;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+    .active-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 12px 3px 4px;
+      font-size: 0.75rem;
       color: var(--text);
     }
-    .active-user-row img {
-      width: 22px;
-      height: 22px;
+    .active-user-chip img,
+    .active-user-chip .active-user-guest-icon {
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
     }
-    .active-user-row .active-user-guest-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
+    .active-user-chip .active-user-guest-icon {
       background: var(--bg-soft, #22252c);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem;
-      flex-shrink: 0;
+      font-size: 0.78rem;
     }
-    .active-user-row.you-row {
+    .active-user-chip.you-chip {
+      border-color: var(--accent);
       color: var(--accent);
-      font-weight: 600;
     }
     .active-users-empty {
-      padding: 10px 14px;
       font-size: 0.75rem;
       color: var(--muted);
     }
     @media(max-width:480px) {
-      .active-users-widget {
-        left: 10px;
-        bottom: 10px;
-        max-width: 200px;
+      .active-users-label span:not(.active-users-dot):not(.active-users-count) {
+        display: none;
       }
     }
 
@@ -2674,6 +2658,16 @@
     </div>
   </header>
 
+  <!-- AKTİF KULLANICILAR -->
+  <div class="active-users-bar" id="activeUsersWidget">
+    <div class="active-users-label">
+      <span class="active-users-dot"></span>
+      <span>Şu an aktif</span>
+      <span class="active-users-count" id="activeUsersCount">0</span>
+    </div>
+    <div class="active-users-list" id="activeUsersList"></div>
+  </div>
+
   <!-- HERO -->
   <div class="hero">
     <div class="hero-inner">
@@ -2711,17 +2705,6 @@
 
   <!-- TOAST -->
   <div class="toast-container" id="toastContainer"></div>
-
-  <!-- AKTİF KULLANICILAR -->
-  <div class="active-users-widget open" id="activeUsersWidget">
-    <div class="active-users-header" onclick="toggleActiveUsersWidget()">
-      <span class="active-users-dot"></span>
-      <span>Şu an aktif</span>
-      <span class="active-users-count" id="activeUsersCount">0</span>
-      <span class="active-users-toggle-icon">▲</span>
-    </div>
-    <div class="active-users-list" id="activeUsersList"></div>
-  </div>
 
   <!-- MAIN -->
   <div class="main-container">
@@ -3377,16 +3360,12 @@
       }
       let html = namedUsers.map(u => {
         const isYou = !!(currentUser && u.uid === currentUser.uid);
-        return `<div class="active-user-row${isYou ? ' you-row' : ''}"><img src="${escapeHtml(safeName(u.avatar, DEFAULT_AVATAR))}" alt="" loading="lazy" decoding="async"><span>${escapeHtml(safeName(u.name, 'Kullanıcı'))}${isYou ? ' (Sen)' : ''}</span></div>`;
+        return `<div class="active-user-chip${isYou ? ' you-chip' : ''}"><img src="${escapeHtml(safeName(u.avatar, DEFAULT_AVATAR))}" alt="" loading="lazy" decoding="async"><span>${escapeHtml(safeName(u.name, 'Kullanıcı'))}${isYou ? ' (Sen)' : ''}</span></div>`;
       }).join('');
       if (guestCount > 0) {
-        html += `<div class="active-user-row"><span class="active-user-guest-icon">👤</span><span>Misafir${guestCount > 1 ? ' (' + guestCount + ')' : ''}</span></div>`;
+        html += `<div class="active-user-chip"><span class="active-user-guest-icon">👤</span><span>Misafir${guestCount > 1 ? ' (' + guestCount + ')' : ''}</span></div>`;
       }
       listEl.innerHTML = html;
-    }
-    function toggleActiveUsersWidget() {
-      const w = $('activeUsersWidget');
-      if (w) w.classList.toggle('open');
     }
 
     // ----- BİLDİRİM -----
