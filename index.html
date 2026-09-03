@@ -13,6 +13,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="b8vdTDfntMZYIGToC6Wa-GGe-v7FiOzlrNRQY48eGxE" />
   <title>BelascoAuto | BeamNG İlan Pazarı</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="shortcut icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
   <meta name="description" content="BelascoAuto - BeamNG.drive için en büyük ilan pazarı." />
   <link rel="canonical" href="https://belascoauto.com" />
   <!-- Bağlantı ön-ısıtma: DNS/TLS kurulumunu erkenden başlatarak ilk yükleme süresini kısaltır -->
@@ -3063,11 +3066,6 @@
         <div>
           <div id="detailSpecs" style="display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--muted);margin-bottom:1rem;"></div>
           <div id="detailDescriptionContainer" style="margin-bottom:1rem;background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--border);display:none;"><div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:3px;text-transform:uppercase;">Açıklama</div><div id="detailDescription" style="font-size:.85rem;color:var(--text);white-space:pre-wrap;"></div></div>
-          <div id="detailPartsDamageContainer" style="margin-bottom:1rem;background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--border);display:none;">
-            <div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;">🚗 Kaporta Parça Durumu</div>
-            <div id="detailCarDiagramWrap"></div>
-            <div id="detailPartsDamageGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:10px;"></div>
-          </div>
           <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
             <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="openPublicProfile(currentSelectedAd?.ownerId)"><div class="avatar-wrap"><img id="detailSellerAvatar" src="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" alt="Satıcı"><span class="online-dot" id="detailSellerOnlineDot"></span></div><div><div id="detailSellerName" style="font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;font-size:.9rem;"></div><div id="detailSellerUniqueName" style="font-size:.65rem;color:var(--muted);">@...</div><div id="detailSellerAccountDate" style="font-size:.7rem;color:var(--muted);">Kayıt: ...</div></div></div>
             <div style="display:flex;gap:6px;align-items:center;"><span id="detailSellerTypeBadge" style="background:var(--card);padding:2px 8px;border-radius:4px;font-size:.65rem;border:1px solid var(--border);"></span><button onclick="openReportModal('ad', currentSelectedAd?.id, currentSelectedAd?.title, currentSelectedAd?.ownerId)" style="background:none;border:none;color:#ef4444;font-size:.75rem;cursor:pointer;">🚨 Rapor Et</button></div>
@@ -4534,6 +4532,11 @@
         images: currentUploadedImages,
         thumbnailIndex: currentSelectedThumbnailIndex,
         videos: currentUploadedVideos,
+      };
+    }
+
+    function currentUserOwnerFields() {
+      return {
         ownerId: currentUser.uid,
         ownerDisplayName: currentUserProfile.displayName || currentUserProfile.uniqueName,
         ownerUniqueName: currentUserProfile.uniqueName || 'user' + currentUser.uid.slice(0, 4),
@@ -4605,6 +4608,7 @@
         btn.disabled = false;
         btn.textContent = "🚀 İlanı Yayınla"; return; }
       const payload = { ...readCommonAdFields(), approved: false, isDraft: false, favorites: 0, views: 0 };
+      if (!editingAdId) Object.assign(payload, currentUserOwnerFields());
       if (pcResult.pcData) { payload.pcFile = pcResult.pcData;
         payload.pcFileName = pcResult.pcName; }
       try {
@@ -4642,6 +4646,7 @@
         draftBtn.disabled = false;
         draftBtn.textContent = originalText; return; }
       const payload = { ...readCommonAdFields(), isDraft: true, favorites: 0, views: 0, updatedAt: Date.now() };
+      if (!editingAdId) Object.assign(payload, currentUserOwnerFields());
       if (pcResult.pcData) { payload.pcFile = pcResult.pcData;
         payload.pcFileName = pcResult.pcName; }
       try {
@@ -4859,15 +4864,6 @@
       const descBox = $('detailDescriptionContainer');
       if (ad.description) { $('detailDescription').textContent = ad.description;
         descBox.style.display = 'block'; } else descBox.style.display = 'none';
-      const partsBox = $('detailPartsDamageContainer');
-      if (ad.partsDamage && Object.keys(ad.partsDamage).length) {
-        $('detailCarDiagramWrap').innerHTML = buildCarDiagramSVG(ad.partsDamage, false);
-        $('detailPartsDamageGrid').innerHTML = CAR_PART_LIST.map(p => {
-          const status = ad.partsDamage[p.id] || 'Hasarsız';
-          return `<div style="font-size:.75rem;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 7px;display:flex;justify-content:space-between;gap:6px;"><span style="color:var(--muted);">${escapeHtml(p.label)}</span><strong>${partDamageColor(status)} ${escapeHtml(status)}</strong></div>`;
-        }).join('');
-        partsBox.style.display = 'block';
-      } else partsBox.style.display = 'none';
       const displayName = safeName(ad.ownerDisplayName, safeName(ad.ownerNickname, 'Anonim'));
       const uniqueName = safeName(ad.ownerUniqueName, null) && ad.ownerUniqueName !== 'unknown' ?
         '@' + ad.ownerUniqueName :
