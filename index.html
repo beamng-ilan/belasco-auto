@@ -1810,6 +1810,108 @@
       }
     }
 
+    /* ===== AKTİF KULLANICILAR ===== */
+    .active-users-widget {
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      z-index: 500;
+      background: rgba(20, 22, 27, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      max-width: 240px;
+      overflow: hidden;
+      animation: fadeIn 0.4s ease;
+    }
+    .active-users-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .active-users-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      flex-shrink: 0;
+      animation: bellPulse 2s infinite;
+    }
+    .active-users-count {
+      margin-left: auto;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.75rem;
+    }
+    .active-users-toggle-icon {
+      font-size: 0.65rem;
+      color: var(--muted);
+      transition: transform 0.2s ease;
+    }
+    .active-users-widget.open .active-users-toggle-icon {
+      transform: rotate(180deg);
+    }
+    .active-users-list {
+      max-height: 0;
+      overflow-y: auto;
+      transition: max-height 0.25s ease;
+      border-top: 1px solid transparent;
+    }
+    .active-users-widget.open .active-users-list {
+      max-height: 220px;
+      border-top: 1px solid var(--border);
+    }
+    .active-user-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+    .active-user-row img {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .active-user-row .active-user-guest-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--bg-soft, #22252c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .active-user-row.you-row {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .active-users-empty {
+      padding: 10px 14px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    @media(max-width:480px) {
+      .active-users-widget {
+        left: 10px;
+        bottom: 10px;
+        max-width: 200px;
+      }
+    }
+
     .email-unverified {
       color: #f59e0b;
       font-size: 0.7rem;
@@ -2610,6 +2712,17 @@
   <!-- TOAST -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- AKTİF KULLANICILAR -->
+  <div class="active-users-widget open" id="activeUsersWidget">
+    <div class="active-users-header" onclick="toggleActiveUsersWidget()">
+      <span class="active-users-dot"></span>
+      <span>Şu an aktif</span>
+      <span class="active-users-count" id="activeUsersCount">0</span>
+      <span class="active-users-toggle-icon">▲</span>
+    </div>
+    <div class="active-users-list" id="activeUsersList"></div>
+  </div>
+
   <!-- MAIN -->
   <div class="main-container">
     <aside class="filters-sidebar">
@@ -2858,7 +2971,7 @@
           <div class="form-group"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">MARKA</label><select id="postBrand" class="filter-select" required></select></div>
           <div class="form-group"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">MODEL</label><input type="text" id="postModel" class="filter-input" placeholder="Doğan SLX" required></div>
           <div class="form-group"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">KASA TİPİ</label><select id="postBodyType" class="filter-select" required><option value="Sedan">Sedan</option><option value="Hatchback">Hatchback</option><option value="SUV">SUV / Offroad</option><option value="Coupe">Coupe</option><option value="Cabriolet">Cabriolet</option><option value="Station Wagon">Station Wagon</option><option value="Pickup">Pickup</option><option value="Van">Van / Minivan</option><option value="Supercar">Süper Spor</option></select></div>
-          <div class="form-group"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">YAKIT TİPİ</label><select id="postFuel" class="filter-select" required onchange="handleFuelTypeChange()"><option value="" selected disabled>Seçiniz</option><option value="Benzin">Benzin</option><option value="Dizel">Dizel</option><option value="LPG / Otogaz">LPG / Otogaz</option><option value="Elektrik">Elektrik</option><option value="Hibrit">Hibrit</option></select></div>
+          <div class="form-group"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">YAKIT TİPİ</label><select id="postFuel" class="filter-select" required onchange="applyFuelDependentLocks()"><option value="" selected disabled hidden>Seçiniz...</option><option value="Benzin">Benzin</option><option value="Dizel">Dizel</option><option value="LPG / Otogaz">LPG / Otogaz</option><option value="Elektrik">Elektrik</option><option value="Hibrit">Hibrit</option></select></div>
           <div class="form-group"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">MODEL YILI</label><input type="number" id="postYear" class="filter-input" placeholder="1993" min="1900" max="2026" required></div>
           <div class="form-group"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">KİLOMETRE (KM)</label><input type="number" id="postKm" class="filter-input" placeholder="120000" required></div>
           <div class="form-group"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">AĞIRLIK (KG)</label><input type="number" id="postWeight" class="filter-input" placeholder="1450" min="100" max="5000" required></div>
@@ -2948,6 +3061,16 @@
     let adminUidCache = null;
 
     const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=random&size=80";
+    // Eski hatalı kayıtlarda bazı hesapların isim/avatar alanı gerçek "undefined" değeri yerine
+    // "undefined" METNİ olarak kaydedilmişti. Normal "a || b" bunu YAKALAYAMAZ çünkü "undefined"
+    // dolu (truthy) bir string'dir. Bu fonksiyon eksik/boş/"undefined"/"null" değerleri aynı
+    // şekilde ele alıp güvenli bir isim döndürür.
+    function safeName(value, fallback) {
+      if (value === undefined || value === null) return fallback;
+      const s = String(value).trim();
+      if (s === '' || s === 'undefined' || s === 'null') return fallback;
+      return value;
+    }
     const BEAMNG_BRANDS = ["Autobello", "Bruckell", "Burnside", "Cherrier", "Civetta", "ETK", "FPU", "Gavril", "Hirochi", "Ibishu", "Soliad", "SP", "Wentward"];
     const MODDED_BRANDS = ["Acura", "Alfa Romeo", "Anadol", "Aston Martin", "Audi", "Bentley", "BMW", "Bugatti", "Buick", "BYD", "Cadillac", "Chevrolet", "Chrysler", "Citroën", "Dacia", "Daihatsu", "Devrim", "Dodge", "Ferrari", "Fiat", "Ford", "Genesis", "GMC", "Great Wall", "Honda", "Hyundai", "Infiniti", "Isuzu", "Jaguar", "Jeep", "Karsan", "Kia", "Lamborghini", "Land Rover", "Lexus", "Lincoln", "Maserati", "Mazda", "McLaren", "Mercedes-Benz", "MG", "Mini", "Mitsubishi", "Nissan", "Opel", "Otokar", "Peugeot", "Porsche", "Proton", "Renault", "Rolls-Royce", "Saab", "Seat", "Škoda", "SsangYong", "Subaru", "Suzuki", "Tesla", "Tofaş", "TOGG", "Toyota", "Volkswagen", "Volvo"];
     const ENGINE_SIZES = ["0.5L", "0.6L", "0.7L", "0.8L", "0.9L", "1.0L", "1.1L", "1.2L", "1.3L", "1.4L", "1.5L", "1.6L", "1.7L", "1.8L", "1.9L", "2.0L", "2.1L", "2.2L", "2.3L", "2.4L", "2.5L", "2.6L", "2.7L", "2.8L", "2.9L", "3.0L", "3.2L", "3.4L", "3.6L", "3.8L", "4.0L", "4.2L", "4.5L", "4.8L", "5.0L", "5.1L", "5.2L", "5.3L", "5.4L", "5.5L", "5.6L", "5.7L", "5.8L", "5.9L", "6.0L", "6.1L", "6.2L", "6.3L", "6.4L", "6.5L", "6.6L", "6.7L", "6.8L", "6.9L", "7.0L", "7.1L", "7.2L", "7.3L", "7.4L", "7.5L", "7.6L", "7.7L", "7.8L", "7.9L", "8.0L", "8.1L", "8.2L", "8.3L", "8.4L", "8.5L", "8.6L", "8.7L", "8.8L", "8.9L", "9.0L", "9.1L", "9.2L", "9.3L", "9.4L", "9.5L", "9.6L", "9.7L", "9.8L", "9.9L", "10.0L", "10.1L", "10.2L", "10.3L", "10.4L", "10.5L", "10.6L", "10.7L", "10.8L", "10.9L", "11.0L", "11.1L", "11.2L", "11.3L", "11.4L", "11.5L", "11.6L", "11.7L", "11.8L", "11.9L", "12.0L", "12.1L", "12.2L", "12.3L", "12.4L", "12.5L", "12.6L", "12.7L", "12.8L", "12.9L", "13.0L", "13.1L", "13.2L", "13.3L", "13.4L", "13.5L", "13.6L", "13.7L", "13.8L", "13.9L", "14.0L", "14.1L", "14.2L", "14.3L", "14.4L", "14.5L", "14.6L", "14.7L", "14.8L", "14.9L", "15.0L", "15.1L", "15.2L", "15.3L", "15.4L", "15.5L", "15.6L", "15.7L", "15.8L", "15.9L", "16.0L", "16.1L", "16.2L", "16.3L", "16.4L", "16.5L", "16.6L", "16.7L", "16.8L", "16.9L", "17.0L", "17.1L", "17.2L", "17.3L", "17.4L", "17.5L", "17.6L", "17.7L", "17.8L", "17.9L", "18.0L", "18.1L", "18.2L", "18.3L", "18.4L", "18.5L", "18.6L", "18.7L", "18.8L", "18.9L", "19.0L", "19.1L", "19.2L", "19.3L", "19.4L", "19.5L", "19.6L", "19.7L", "19.8L", "19.9L", "20.0L", "Elektrikli"];
@@ -3196,6 +3319,76 @@
       }
     }
 
+    // ----- ŞU AN AKTİF OLANLAR WIDGET'I (herkes görebilir: üye + misafir) -----
+    // 'activeVisitors' altına giren her sekme/oturum için kısa ömürlü bir kayıt
+    // düşülür; bağlantı kesilince onDisconnect() ile otomatik silinir.
+    let myPresenceRef = null;
+    function buildMyPresenceInfo() {
+      if (currentUser && currentUserProfile) {
+        return {
+          uid: currentUser.uid,
+          name: safeName(currentUserProfile.displayName, safeName(currentUserProfile.uniqueName, 'Kullanıcı')),
+          avatar: safeName(currentUserProfile.avatar, DEFAULT_AVATAR),
+          lastSeen: firebase.database.ServerValue.TIMESTAMP
+        };
+      }
+      return { guest: true, lastSeen: firebase.database.ServerValue.TIMESTAMP };
+    }
+    function startPresenceTracking() {
+      db.ref('.info/connected').on('value', snap => {
+        if (snap.val() === false) return;
+        myPresenceRef = db.ref('activeVisitors').push();
+        myPresenceRef.onDisconnect().remove().catch(() => {});
+        myPresenceRef.set(buildMyPresenceInfo()).catch(() => {});
+      });
+      // Bağlantı uzun süre açık kalırsa kaydı taze tutmak için düzenli yenileme
+      setInterval(() => { if (myPresenceRef) myPresenceRef.update(buildMyPresenceInfo()).catch(() => {}); }, 25000);
+    }
+    function refreshMyPresenceInfo() {
+      if (myPresenceRef) myPresenceRef.update(buildMyPresenceInfo()).catch(() => {});
+    }
+    function listenActiveVisitors() {
+      db.ref('activeVisitors').on('value', snap => renderActiveUsersWidget(snap.val()));
+    }
+    function renderActiveUsersWidget(val) {
+      const listEl = $('activeUsersList');
+      const countEl = $('activeUsersCount');
+      if (!listEl || !countEl) return;
+      const entries = Object.values(val || {});
+      const now = Date.now();
+      const seenUids = new Set();
+      const namedUsers = [];
+      let guestCount = 0;
+      entries.forEach(e => {
+        if (!e || !e.lastSeen || now - e.lastSeen > 90000) return; // 90sn'den eski / kopmuş kayıtları yok say
+        if (e.uid) {
+          if (seenUids.has(e.uid)) return; // aynı kullanıcı birden fazla sekme açtıysa tek say
+          seenUids.add(e.uid);
+          namedUsers.push(e);
+        } else {
+          guestCount++;
+        }
+      });
+      namedUsers.sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'tr'));
+      countEl.textContent = namedUsers.length + guestCount;
+      if (!namedUsers.length && !guestCount) {
+        listEl.innerHTML = '<div class="active-users-empty">Şu an aktif kimse yok.</div>';
+        return;
+      }
+      let html = namedUsers.map(u => {
+        const isYou = !!(currentUser && u.uid === currentUser.uid);
+        return `<div class="active-user-row${isYou ? ' you-row' : ''}"><img src="${escapeHtml(safeName(u.avatar, DEFAULT_AVATAR))}" alt="" loading="lazy" decoding="async"><span>${escapeHtml(safeName(u.name, 'Kullanıcı'))}${isYou ? ' (Sen)' : ''}</span></div>`;
+      }).join('');
+      if (guestCount > 0) {
+        html += `<div class="active-user-row"><span class="active-user-guest-icon">👤</span><span>Misafir${guestCount > 1 ? ' (' + guestCount + ')' : ''}</span></div>`;
+      }
+      listEl.innerHTML = html;
+    }
+    function toggleActiveUsersWidget() {
+      const w = $('activeUsersWidget');
+      if (w) w.classList.toggle('open');
+    }
+
     // ----- BİLDİRİM -----
     async function pushNotification(targetUid, type, text, icon, meta) {
       if (!targetUid) return;
@@ -3304,40 +3497,34 @@
           postEng.appendChild(o); });
         if (ENGINE_SIZES.includes(cur)) postEng.value = cur; }
     }
-    // Yakıt tipi "Elektrik" seçilince motor hacmi ve besleme tipini otomatik
-    // olarak elektrikli değerlere kilitler; başka bir yakıt seçilince bu iki
-    // alanı tekrar seçilebilir hale getirir. Yakıt tipi seçilmeden bu iki
-    // alan seçilemez (disabled) kalır.
-    function handleFuelTypeChange() {
+
+    // Yakıt tipine göre motor hacmi / besleme tipi alanlarını kilitler:
+    // - Yakıt tipi seçilmeden bu iki alan seçilemez.
+    // - "Elektrik" seçilirse ikisi de otomatik "Elektrikli"/"Elektrik Motoru" olur ve değiştirilemez.
+    // - Elektrik dışı bir yakıta geçilirse tekrar açılır (önceki elektrik değeri kalmışsa sıfırlanır).
+    function applyFuelDependentLocks() {
       const fuel = $('postFuel').value;
       const engineSel = $('postEngine');
-      const aspSel = $('postAspiration');
-      if (!engineSel || !aspSel) return;
-      const engineElectricOpt = Array.from(engineSel.options).find(o => o.value === 'Elektrikli');
-      const aspElectricOpt = Array.from(aspSel.options).find(o => o.value === 'Elektrik Motoru');
+      const aspirationSel = $('postAspiration');
+      if (!engineSel || !aspirationSel) return;
+      if (!fuel) {
+        engineSel.disabled = true;
+        aspirationSel.disabled = true;
+        return;
+      }
       if (fuel === 'Elektrik') {
-        if (engineElectricOpt) engineElectricOpt.disabled = false;
-        if (aspElectricOpt) aspElectricOpt.disabled = false;
-        engineSel.value = 'Elektrikli';
+        if (ENGINE_SIZES.includes('Elektrikli')) engineSel.value = 'Elektrikli';
+        aspirationSel.value = 'Elektrik Motoru';
         engineSel.disabled = true;
-        aspSel.value = 'Elektrik Motoru';
-        aspSel.disabled = true;
-      } else if (fuel) {
-        engineSel.disabled = false;
-        aspSel.disabled = false;
-        if (engineSel.value === 'Elektrikli') engineSel.value = '1.6L';
-        if (aspSel.value === 'Elektrik Motoru') aspSel.value = 'Atmosferik';
-        // Elektrik dışı bir yakıt tipinde "Elektrikli" / "Elektrik Motoru"
-        // seçeneklerinin manuel olarak seçilmesini engelle.
-        if (engineElectricOpt) engineElectricOpt.disabled = true;
-        if (aspElectricOpt) aspElectricOpt.disabled = true;
+        aspirationSel.disabled = true;
       } else {
-        engineSel.disabled = true;
-        aspSel.disabled = true;
-        if (engineElectricOpt) engineElectricOpt.disabled = true;
-        if (aspElectricOpt) aspElectricOpt.disabled = true;
+        engineSel.disabled = false;
+        aspirationSel.disabled = false;
+        if (engineSel.value === 'Elektrikli') engineSel.value = '1.6L';
+        if (aspirationSel.value === 'Elektrik Motoru') aspirationSel.value = 'Atmosferik';
       }
     }
+
     function togglePertState() {
       const isPert = $('postIsPert').checked;
       const ds = $('postDamageStatus');
@@ -3536,13 +3723,18 @@
 
     // ----- ESKİ HESAPLAR -----
     async function assignUniqueNamesToOldUsers() {
+      // Firebase kuralları gereği bir kullanıcı yalnızca KENDİ profiline yazabilir
+      // (kendi hesabındaki "undefined" onarımı zaten girişte ayrıca yapılıyor).
+      // Başka hesapları toplu onarmak için admin yetkisi (kural tarafında admin bypass'ı) gerekir.
+      if (!currentUser || !isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile)) return;
       try {
         const snap = await db.ref('users').once('value');
         const users = snap.val() || {};
         let count = 0;
         for (const uid in users) {
           const u = users[uid];
-          if (!u.uniqueName || u.uniqueName === 'undefined' || u.uniqueName === '') {
+          const updates = {};
+          if (safeName(u.uniqueName, null) === null || u.uniqueName === 'undefined') {
             let base = 'user' + Math.floor(1000 + Math.random() * 9000);
             let final = base,
               exists = true,
@@ -3553,11 +3745,17 @@
               else { final = 'user' + Math.floor(1000 + Math.random() * 9000);
                 tries++; }
             }
-            await db.ref('users/' + uid + '/uniqueName').set(final);
+            updates.uniqueName = final;
+          }
+          const fixedUniqueName = updates.uniqueName || u.uniqueName;
+          if (safeName(u.displayName, null) === null) updates.displayName = fixedUniqueName;
+          if (safeName(u.avatar, null) === null) updates.avatar = DEFAULT_AVATAR;
+          if (Object.keys(updates).length) {
+            await db.ref('users/' + uid).update(updates);
             count++;
           }
         }
-        if (count > 0) console.log(`✅ ${count} eski kullanıcıya benzersiz isim atandı.`);
+        if (count > 0) console.log(`✅ ${count} eski hesabın isim/avatar bilgisi onarıldı.`);
       } catch (e) { console.error('Eski kullanıcılara isim atanırken hata:', e); }
     }
 
@@ -3568,7 +3766,7 @@
         const myAds = snap.val();
         if (!myAds) return;
         const wantedUniqueName = currentUserProfile.uniqueName || '';
-        const wantedDisplayName = currentUserProfile.displayName || currentUserProfile.uniqueName || '';
+        const wantedDisplayName = safeName(currentUserProfile.displayName, safeName(currentUserProfile.uniqueName, ''));
         const wantedAvatar = currentUserProfile.avatar || DEFAULT_AVATAR;
         for (const adId in myAds) {
           const ad = myAds[adId];
@@ -3973,7 +4171,7 @@
       const favClass = isFav ? 'favorite-btn active' : 'favorite-btn';
       const favIcon = isFav ? '❤️' : '🤍';
       const viewCount = ad.views || 0;
-      const ownerName = ad.ownerDisplayName || ad.ownerNickname || ad.ownerUniqueName || 'Anonim';
+      const ownerName = safeName(ad.ownerDisplayName, safeName(ad.ownerNickname, safeName(ad.ownerUniqueName, 'Anonim')));
       const ownerAvatarUrl = escapeHtml(ad.ownerAvatar || DEFAULT_AVATAR);
 
       card.innerHTML = `
@@ -4053,7 +4251,7 @@
       $('postWeight').value = 1450;
       toggleBrandList();
       populateEngineSelects();
-      handleFuelTypeChange();
+      applyFuelDependentLocks();
       $('postModal').classList.add('active');
     }
 
@@ -4092,7 +4290,7 @@
       currentSelectedThumbnailIndex = ad.thumbnailIndex || 0;
       renderImagePreviews();
       populateEngineSelects();
-      handleFuelTypeChange();
+      applyFuelDependentLocks();
       closeDetailModal();
       closeAdminModal();
       $('postModal').classList.add('active');
@@ -4149,7 +4347,7 @@
       editingAdId = null;
       toggleBrandList();
       populateEngineSelects();
-      handleFuelTypeChange();
+      applyFuelDependentLocks();
       closePostModal();
     }
 
@@ -4191,12 +4389,6 @@
         btn.disabled = false;
         btn.textContent = "🚀 İlanı Yayınla"; return; }
       const payload = { ...readCommonAdFields(), approved: false, isDraft: false, favorites: 0, views: 0 };
-      // Düzenleme sırasında ilan sahibi bilgilerini işlemi yapan kişiye (ör. admin)
-      // göre DEĞİŞTİRME — orijinal sahip korunmalı.
-      if (editingAdId) { delete payload.ownerId;
-        delete payload.ownerDisplayName;
-        delete payload.ownerUniqueName;
-        delete payload.ownerAvatar; }
       if (pcResult.pcData) { payload.pcFile = pcResult.pcData;
         payload.pcFileName = pcResult.pcName; }
       try {
@@ -4234,10 +4426,6 @@
         draftBtn.disabled = false;
         draftBtn.textContent = originalText; return; }
       const payload = { ...readCommonAdFields(), isDraft: true, favorites: 0, views: 0, updatedAt: Date.now() };
-      if (editingAdId) { delete payload.ownerId;
-        delete payload.ownerDisplayName;
-        delete payload.ownerUniqueName;
-        delete payload.ownerAvatar; }
       if (pcResult.pcData) { payload.pcFile = pcResult.pcData;
         payload.pcFileName = pcResult.pcName; }
       try {
@@ -4316,7 +4504,7 @@
         type: type === 'ad' ? "İlan Şikayeti" : "Mesaj Şikayeti",
         reason: fullReason,
         reporter: currentUserProfile.uniqueName || currentUser.uid,
-        reporterDisplay: currentUserProfile.displayName || currentUserProfile.uniqueName || 'Kullanıcı',
+        reporterDisplay: safeName(currentUserProfile.displayName, safeName(currentUserProfile.uniqueName, 'Kullanıcı')),
         timestamp: Date.now()
       };
       if (type === 'ad') {
@@ -4324,8 +4512,8 @@
         payload.adId = id;
         payload.adTitle = ad ? ad.title : '';
         payload.reportedUid = ad ? ad.ownerId : '';
-        payload.reportedDisplay = ad ? (ad.ownerDisplayName || ad.ownerUniqueName || 'Kullanıcı') : 'Kullanıcı';
-        payload.reportedUniqueName = ad ? (ad.ownerUniqueName || '') : '';
+        payload.reportedDisplay = ad ? safeName(ad.ownerDisplayName, safeName(ad.ownerUniqueName, 'Kullanıcı')) : 'Kullanıcı';
+        payload.reportedUniqueName = ad ? safeName(ad.ownerUniqueName, '') : '';
       } else {
         payload.msgKey = id;
         payload.msgText = text || '';
@@ -4335,8 +4523,8 @@
             const rSnap = await db.ref('users/' + senderUid).once('value');
             if (rSnap.exists()) {
               const rU = rSnap.val();
-              payload.reportedDisplay = rU.displayName || rU.uniqueName || 'Kullanıcı';
-              payload.reportedUniqueName = rU.uniqueName || '';
+              payload.reportedDisplay = safeName(rU.displayName, safeName(rU.uniqueName, 'Kullanıcı'));
+              payload.reportedUniqueName = safeName(rU.uniqueName, '');
               payload.reportedUid = senderUid;
             }
           }
@@ -4402,13 +4590,13 @@
       const descBox = $('detailDescriptionContainer');
       if (ad.description) { $('detailDescription').textContent = ad.description;
         descBox.style.display = 'block'; } else descBox.style.display = 'none';
-      const displayName = ad.ownerDisplayName || ad.ownerNickname || 'Anonim';
-      const uniqueName = (ad.ownerUniqueName && ad.ownerUniqueName !== 'undefined' && ad.ownerUniqueName !== 'unknown') ?
+      const displayName = safeName(ad.ownerDisplayName, safeName(ad.ownerNickname, 'Anonim'));
+      const uniqueName = safeName(ad.ownerUniqueName, null) && ad.ownerUniqueName !== 'unknown' ?
         '@' + ad.ownerUniqueName :
         (ad.ownerId ? '@user' + ad.ownerId.slice(0, 4) : '');
       $('detailSellerName').innerHTML = escapeHtml(displayName) + (isUserAdmin(ad.ownerId, null, null) ? ' <span class="admin-tag">Admin</span>' : '');
       $('detailSellerUniqueName').textContent = uniqueName;
-      $('detailSellerAvatar').src = ad.ownerAvatar || DEFAULT_AVATAR;
+      $('detailSellerAvatar').src = safeName(ad.ownerAvatar, DEFAULT_AVATAR);
       $('detailSellerAccountDate').textContent = "Yükleniyor...";
       $('detailSellerTypeBadge').textContent = ad.sellerType === 'bayi' ? '🏢 BAYİ' : '👤 SAHİBİNDEN';
       $('detailDmBtn').style.display = (currentUser && ad.ownerId === currentUser.uid) ? 'none' : 'flex';
@@ -4439,7 +4627,7 @@
             const u = snap.val();
             if (u) {
               if (u.uniqueName) $('detailSellerUniqueName').textContent = '@' + u.uniqueName;
-              $('detailSellerName').innerHTML = escapeHtml(u.displayName || u.uniqueName) + (isUserAdmin(ad.ownerId, u.email, u) ? ' <span class="admin-tag">Admin</span>' : '');
+              $('detailSellerName').innerHTML = escapeHtml(safeName(u.displayName, safeName(u.uniqueName, 'Kullanıcı'))) + (isUserAdmin(ad.ownerId, u.email, u) ? ' <span class="admin-tag">Admin</span>' : '');
               $('detailSellerAccountDate').textContent = "Üyelik: " + (u.createdAt ? new Date(u.createdAt).toLocaleDateString('tr-TR') : '?');
               renderPresenceRespectingBlocks(ad.ownerId, u, 'detailSellerOnlineDot', null);
               const ban = await checkUserPunishment(ad.ownerId, u.uniqueName, "Hesap Askıya Alma");
@@ -4758,7 +4946,7 @@
       closePublicProfileModal();
       closeDmPanel();
       const peer = await getPeerUser(otherUid);
-      $('dmPeerName').textContent = peer.displayName || peer.uniqueName || 'Kullanıcı';
+      $('dmPeerName').textContent = safeName(peer.displayName, safeName(peer.uniqueName, 'Kullanıcı'));
       $('dmPeerAvatar').src = peer.avatar || DEFAULT_AVATAR;
       renderPresenceRespectingBlocks(otherUid, peer, 'dmPeerOnlineDot', 'dmPeerOnlineText');
       $('dmChatModal').classList.add('active');
@@ -4769,8 +4957,8 @@
       dmPeerWatchers[otherUid].on('value', snap => {
         const data = snap.val();
         if (data) {
-          $('dmPeerName').textContent = data.displayName || data.uniqueName || 'Kullanıcı';
-          $('dmPeerAvatar').src = data.avatar || DEFAULT_AVATAR;
+          $('dmPeerName').textContent = safeName(data.displayName, safeName(data.uniqueName, 'Kullanıcı'));
+          $('dmPeerAvatar').src = safeName(data.avatar, DEFAULT_AVATAR);
           renderPresenceRespectingBlocks(otherUid, data, 'dmPeerOnlineDot', 'dmPeerOnlineText');
         }
       });
@@ -4780,9 +4968,9 @@
       const snap = await db.ref('users/' + uid).once('value');
       const data = snap.val() || {};
       return {
-        displayName: data.displayName || data.uniqueName || 'Kullanıcı',
-        uniqueName: data.uniqueName || 'user' + uid.slice(0, 4),
-        avatar: data.avatar || DEFAULT_AVATAR,
+        displayName: safeName(data.displayName, safeName(data.uniqueName, 'Kullanıcı')),
+        uniqueName: safeName(data.uniqueName, 'user' + uid.slice(0, 4)),
+        avatar: safeName(data.avatar, DEFAULT_AVATAR),
         online: data.online || false,
         lastSeen: data.lastSeen || null
       };
@@ -4883,7 +5071,7 @@
         const now = Date.now();
         const peer = await getPeerUser(otherUid);
         await db.ref('dmInbox/' + currentUser.uid + '/' + otherUid).update({
-          displayName: peer.displayName || peer.uniqueName || 'Kullanıcı',
+          displayName: safeName(peer.displayName, safeName(peer.uniqueName, 'Kullanıcı')),
           avatar: peer.avatar || DEFAULT_AVATAR,
           lastMessage: text,
           lastTimestamp: now
@@ -4935,7 +5123,7 @@
       body.innerHTML = threads.map(t => `
         <div class="dm-item" onclick="startDmWithUid('${escapeHtml(t.uid)}')">
           <div class="avatar-wrap"><img src="${escapeHtml(t.avatar || DEFAULT_AVATAR)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" loading="lazy" decoding="async"></div>
-          <div class="info"><div class="t">${escapeHtml(t.displayName || 'Kullanıcı')}</div><div class="s">${escapeHtml(t.lastMessage || '')}</div></div>
+          <div class="info"><div class="t">${escapeHtml(safeName(t.displayName, 'Kullanıcı'))}</div><div class="s">${escapeHtml(t.lastMessage || '')}</div></div>
           ${t.unreadCount ? `<span class="unread-badge">${t.unreadCount}</span>` : ''}
         </div>
       `).join('');
@@ -5078,7 +5266,7 @@
         const ban = await checkUserPunishment(uid, u.uniqueName, "Hesap Askıya Alma");
         $('ppBannedBadge').style.display = ban ? 'block' : 'none';
         $('ppAvatar').src = u.avatar || DEFAULT_AVATAR;
-        $('ppDisplayName').innerHTML = escapeHtml(u.displayName || u.uniqueName || 'Kullanıcı') + (isUserAdmin(uid, u.email, u) ? ' <span class="admin-tag">Admin</span>' : '');
+        $('ppDisplayName').innerHTML = escapeHtml(safeName(u.displayName, safeName(u.uniqueName, 'Kullanıcı'))) + (isUserAdmin(uid, u.email, u) ? ' <span class="admin-tag">Admin</span>' : '');
         $('ppUniqueName').textContent = u.uniqueName ? '@' + u.uniqueName : '@user' + uid.slice(0, 4);
         renderPresenceRespectingBlocks(uid, u, 'ppOnlineDot', 'ppOnlineText');
         $('ppJoinDate').textContent = u.createdAt ? new Date(u.createdAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' }) : '-';
@@ -5165,7 +5353,7 @@
         const visBtn = !ad.isDraft ? `<button onclick="toggleAdVisibility('${escapeHtml(ad.id)}')" class="btn" style="padding:0.3rem 0.6rem;font-size:0.75rem;">${ad.isHidden ? '🌐 Aç' : '🔒 Gizle'}</button>` : '';
         c.insertAdjacentHTML('beforeend', `
           <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);padding:8px 12px;border-radius:8px;border:1px solid var(--border);flex-wrap:wrap;gap:8px;">
-            <div><div style="font-weight:600;font-size:0.85rem;">${escapeHtml(ad.title)} ${status}</div><div style="font-size:0.75rem;color:var(--muted);">Sahibi: ${escapeHtml(ad.ownerDisplayName || ad.ownerNickname)} (@${escapeHtml(ad.ownerUniqueName || 'user' + ad.ownerId?.slice(0, 4) || '')})</div><div style="font-size:0.65rem;color:var(--muted);">👁️ ${ad.views || 0} görüntülenme</div></div>
+            <div><div style="font-weight:600;font-size:0.85rem;">${escapeHtml(ad.title)} ${status}</div><div style="font-size:0.75rem;color:var(--muted);">Sahibi: ${escapeHtml(safeName(ad.ownerDisplayName, safeName(ad.ownerNickname, 'Bilinmiyor')))} (@${escapeHtml(safeName(ad.ownerUniqueName, 'user' + (ad.ownerId ? ad.ownerId.slice(0, 4) : '')))})</div><div style="font-size:0.65rem;color:var(--muted);">👁️ ${ad.views || 0} görüntülenme</div></div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
               <button onclick="closeAdminModal(); openDetailModal('${escapeHtml(ad.id)}')" class="btn" style="padding:0.3rem 0.6rem;font-size:0.75rem;">🔍 Göz At</button>
               <button onclick="closeAdminModal(); openEditModal('${escapeHtml(ad.id)}')" class="btn" style="padding:0.3rem 0.6rem;font-size:0.75rem;border-color:#3b82f6;color:#93c5fd;">✏️ Düzenle</button>
@@ -5232,7 +5420,7 @@
             c.insertAdjacentHTML('beforeend', `
               <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
                 <div>
-                  <div style="font-weight:bold;color:#ef4444;font-size:0.9rem;">👤 ${escapeHtml(p.displayName || p.username)} <span style="font-size:0.75rem;background:rgba(239,68,68,0.2);padding:2px 6px;border-radius:4px;border:1px solid #ef4444;">${escapeHtml(p.type)}</span></div>
+                  <div style="font-weight:bold;color:#ef4444;font-size:0.9rem;">👤 ${escapeHtml(safeName(p.displayName, safeName(p.username, 'Kullanıcı')))} <span style="font-size:0.75rem;background:rgba(239,68,68,0.2);padding:2px 6px;border-radius:4px;border:1px solid #ef4444;">${escapeHtml(p.type)}</span></div>
                   <div style="font-size:0.8rem;color:var(--text);margin-top:4px;"><strong>Sebep:</strong> ${escapeHtml(p.reason)}</div>
                   <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">Süre: ${p.days} gün ${p.hours} saat | Kalan: ${rem} | Veren: ${escapeHtml(p.admin || 'Admin')}</div>
                 </div>
@@ -5289,7 +5477,7 @@
         await db.ref('punishments').push({
           uniqueName: uname,
           targetUid: uid,
-          displayName: userData?.displayName || uname,
+          displayName: safeName(userData?.displayName, uname),
           type,
           days,
           hours,
@@ -5382,6 +5570,16 @@
           if (!currentUserProfile.blockedUsers) currentUserProfile.blockedUsers = [];
           if (!currentUserProfile.nameChangeUsed) currentUserProfile.nameChangeUsed = false;
           if (!currentUserProfile.emailVerified) currentUserProfile.emailVerified = false;
+          // Eski hesap: uniqueName/displayName/avatar alanı boş ya da "undefined" metniyse onar ve kalıcı olarak kaydet.
+          const accountFixes = {};
+          if (safeName(currentUserProfile.uniqueName, null) === null) accountFixes.uniqueName = 'user' + user.uid.slice(0, 6);
+          const fixedUniqueName = accountFixes.uniqueName || currentUserProfile.uniqueName;
+          if (safeName(currentUserProfile.displayName, null) === null) accountFixes.displayName = fixedUniqueName;
+          if (safeName(currentUserProfile.avatar, null) === null) accountFixes.avatar = DEFAULT_AVATAR;
+          if (Object.keys(accountFixes).length) {
+            Object.assign(currentUserProfile, accountFixes);
+            db.ref('users/' + user.uid).update(accountFixes).catch(() => {});
+          }
         } else {
           const fallback = user.email ? user.email.split('@')[0].replace(/[^A-Za-z0-9_-]/g, '_') : 'user' + Date.now().toString(36);
           currentUserProfile = {
@@ -5410,7 +5608,7 @@
           firstAuthLoadDone = true;
           return;
         }
-        $('userNicknameText').textContent = currentUserProfile.displayName || currentUserProfile.uniqueName;
+        $('userNicknameText').textContent = safeName(currentUserProfile.displayName, safeName(currentUserProfile.uniqueName, 'Kullanıcı'));
         $('userHeaderAvatar').src = currentUserProfile.avatar || DEFAULT_AVATAR;
         updateFavoritesUI();
         if (isUserAdmin(user.uid, user.email, currentUserProfile)) { $('btnAdminPanel').style.display = 'flex';
@@ -5439,6 +5637,7 @@
         showOnlyFavorites = false;
         stopLiveBanWatcher();
       }
+      refreshMyPresenceInfo();
       renderAds();
       firstAuthLoadDone = true;
     });
@@ -5492,10 +5691,10 @@
     populateFilterBrands();
     toggleBrandList();
     populateEngineSelects();
-    handleFuelTypeChange();
     renderRecentlyViewed();
     updateDesktopNotifRow();
     startPunishmentsCache();
+    if (!IS_EMBEDDED_FRAME) { startPresenceTracking(); listenActiveVisitors(); }
 
     document.addEventListener('click', e => {
       if (!$('notifBellWrapper').contains(e.target)) closeNotifPanel();
