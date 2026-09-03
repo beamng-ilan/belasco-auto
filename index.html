@@ -1285,7 +1285,7 @@
     }
     .main-detail-img {
       width: 100%;
-      height: 240px;
+      height: 340px;
       object-fit: cover;
       border-radius: 8px;
       background: #121419;
@@ -1294,7 +1294,12 @@
     }
     @media(min-width:768px) {
       .main-detail-img {
-        height: 320px;
+        height: 480px;
+      }
+    }
+    @media(min-width:1024px) {
+      .main-detail-img {
+        height: 600px;
       }
     }
     .main-detail-img:hover {
@@ -1332,17 +1337,17 @@
     .gallery-thumbs {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      max-height: 120px;
+      gap: 8px;
+      max-height: 150px;
       overflow-y: auto;
-      padding: 4px;
+      padding: 6px;
       background: var(--bg);
       border-radius: 8px;
       border: 1px solid var(--border);
     }
     .gallery-thumbs img {
-      width: 56px;
-      height: 42px;
+      width: 76px;
+      height: 56px;
       object-fit: cover;
       border-radius: 6px;
       cursor: pointer;
@@ -1352,6 +1357,43 @@
     .gallery-thumbs img.active-thumb {
       border-color: var(--accent);
       transform: scale(1.05);
+    }
+    .gallery-thumbs .gthumb-item {
+      position: relative;
+      width: 76px;
+      height: 56px;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.15s;
+      flex-shrink: 0;
+    }
+    .gallery-thumbs .gthumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border: none;
+    }
+    .gallery-thumbs .gthumb-item.active-thumb {
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+    .gthumb-play {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-size: 0.8rem;
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+    }
+    .preview-thumb-video .gthumb-play {
+      font-size: 1.3rem;
     }
 
     /* ===== LIGHTBOX ===== */
@@ -2897,6 +2939,20 @@
     </div>
   </div>
 
+  <!-- İLAN DEVRETME MODALI -->
+  <div class="modal-overlay" id="transferAdModal" style="z-index:1050;">
+    <div class="modal-content" style="max-width:450px;">
+      <div class="modal-header"><h3>🔄 İlanı Devret</h3><button class="close-btn" onclick="closeTransferAdModal()">&times;</button></div>
+      <p id="transferAdInfo" style="color:var(--muted);font-size:.85rem;margin-bottom:1rem;"></p>
+      <div class="form-group full-width" style="margin-bottom:.5rem;">
+        <label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">DEVREDİLECEK KULLANICININ KULLANICI ADI</label>
+        <input type="text" id="transferAdUsername" class="filter-input" placeholder="örn: ahmet123" autocomplete="off">
+      </div>
+      <p style="color:#f59e0b;font-size:.75rem;margin-bottom:1rem;">⚠️ Devrettikten sonra bu ilan üzerindeki tüm yetkileriniz (düzenleme, silme vb.) kalkar. Bu işlem geri alınamaz.</p>
+      <div style="display:flex;gap:10px;"><button class="btn-action btn" onclick="closeTransferAdModal()">İptal</button><button class="btn-action btn-primary" onclick="confirmTransferAd()">🔄 Devret</button></div>
+    </div>
+  </div>
+
   <!-- RAPOR ETME MODALI -->
   <div class="modal-overlay" id="reportModal" style="z-index:1050;">
     <div class="modal-content" style="max-width:480px;">
@@ -2970,6 +3026,7 @@
           </div>
           <div class="form-group full-width" style="border:1px solid var(--border);padding:12px;border-radius:8px;background:var(--bg);"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">BEAMNG .PC DOSYASI (İsteğe Bağlı)</label><input type="file" id="postPcFile" class="filter-input" accept=".pc"></div>
           <div class="form-group full-width"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;"><label style="font-size:.8rem;color:var(--muted);">FOTOĞRAFLAR (Kapak için görsele tıklayın)</label><button type="button" onclick="document.getElementById('postImagesFile').click()" class="btn" style="padding:.2rem .5rem;font-size:.75rem;">+ Ekle</button></div><input type="file" id="postImagesFile" class="filter-input" accept="image/*" multiple onchange="handleMultipleImages(event)" style="display:none;"><div id="imagePreviewContainer" class="preview-container"></div></div>
+          <div class="form-group full-width"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">YOUTUBE VİDEOLARI (İsteğe Bağlı)</label><div style="display:flex;gap:.4rem;"><input type="text" id="postVideoUrlInput" class="filter-input" placeholder="YouTube video linkini yapıştırın..." style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addVideoUrl();}"><button type="button" onclick="addVideoUrl()" class="btn" style="padding:.4rem .8rem;font-size:.8rem;white-space:nowrap;">+ Ekle</button></div><div id="videoPreviewContainer" class="preview-container"></div></div>
         </div>
         <div style="display:flex;gap:.6rem;margin-top:1.2rem;">
           <button type="button" id="saveDraftBtn" onclick="handleSaveDraft()" class="btn-action btn" style="flex:1;text-align:center;background:var(--bg);border:1px solid var(--border);">📝 Taslak Olarak Kaydet</button>
@@ -2981,11 +3038,11 @@
 
   <!-- DETAY MODAL -->
   <div class="modal-overlay" id="detailModal">
-    <div class="modal-content" style="max-width:900px;">
+    <div class="modal-content" style="max-width:1300px;">
       <div class="modal-header"><div><h3 id="detailTitle" style="font-size:1.1rem;">İlan Detayı</h3><span id="detailTimeAgo" style="font-size:.7rem;color:var(--muted);"></span><span id="detailViewCount" style="font-size:.7rem;color:var(--muted);margin-left:8px;">👁️ 0</span></div><div style="display:flex;align-items:center;gap:0.5rem;"><button class="btn" id="shareAdBtn" onclick="shareCurrentAd()" title="İlan linkini kopyala">🔗 Linki Kopyala</button><button class="btn" onclick="showEmbedCode(currentSelectedAdId)" title="Başka bir siteye gömülebilir kod al">🖼️ Embed Kodu</button><button class="close-btn" onclick="closeDetailModal()">&times;</button></div></div>
       <div class="form-grid" style="align-items:start;">
         <div class="detail-gallery">
-          <div style="position:relative;"><img id="detailMainImg" class="main-detail-img" src="" alt="Araç Görseli" onclick="openLightbox(currentGalleryIndex)" title="Tam boyutta incele"><button class="gallery-nav prev" onclick="navigateGallery(-1)">‹</button><button class="gallery-nav next" onclick="navigateGallery(1)">›</button></div>
+          <div style="position:relative;"><img id="detailMainImg" class="main-detail-img" src="" alt="Araç Görseli" onclick="openLightbox(currentGalleryIndex)" title="Tam boyutta incele"><iframe id="detailMainVideo" class="main-detail-img" style="display:none;border:none;" title="Video" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><button class="gallery-nav prev" onclick="navigateGallery(-1)">‹</button><button class="gallery-nav next" onclick="navigateGallery(1)">›</button></div>
           <div id="detailThumbnails" class="gallery-thumbs"></div>
           <div id="detailPcArea" style="margin-top:.4rem;"></div>
           <div id="detailModLinkArea" style="margin-top:.4rem;"></div>
@@ -3010,6 +3067,7 @@
     <button class="lightbox-nav prev" onclick="event.stopPropagation(); navigateLightbox(-1)">‹</button>
     <button class="lightbox-nav next" onclick="event.stopPropagation(); navigateLightbox(1)">›</button>
     <img id="lightboxImg" class="lightbox-img" src="" alt="Tam Boyut" onclick="event.stopPropagation()">
+    <iframe id="lightboxVideo" style="display:none;width:95vw;max-width:1500px;aspect-ratio:16/9;max-height:90vh;border:none;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.8);" onclick="event.stopPropagation()" title="Video" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
 
   <!-- TARTIŞMA MODALI -->
@@ -3079,6 +3137,7 @@
     let currentUserProfile = { uniqueName: "", displayName: "", avatar: DEFAULT_AVATAR, favorites: [], blockedUsers: [], nameChangeUsed: false, email: "", emailVerified: false };
     let adsData = [];
     let currentUploadedImages = [];
+    let currentUploadedVideos = [];
     let currentSelectedThumbnailIndex = 0;
     let currentSelectedAdId = null;
     let editingAdId = null;
@@ -3100,7 +3159,7 @@
     let currentSelectedAd = null;
     let publicProfileViewedUid = null;
     let currentNewAvatar = "";
-    let galleryImages = [];
+    let galleryItems = [];
     let currentGalleryIndex = 0;
     let detailViewTimeout = null;
     let detailViewCounted = false;
@@ -3486,12 +3545,18 @@
       const engineSel = $('postEngine');
       const aspirationSel = $('postAspiration');
       if (!engineSel || !aspirationSel) return;
+      const engineElectricOpt = Array.from(engineSel.options).find(o => o.value === 'Elektrikli');
+      const aspElectricOpt = Array.from(aspirationSel.options).find(o => o.value === 'Elektrik Motoru');
       if (!fuel) {
         engineSel.disabled = true;
         aspirationSel.disabled = true;
+        if (engineElectricOpt) engineElectricOpt.disabled = true;
+        if (aspElectricOpt) aspElectricOpt.disabled = true;
         return;
       }
       if (fuel === 'Elektrik') {
+        if (engineElectricOpt) engineElectricOpt.disabled = false;
+        if (aspElectricOpt) aspElectricOpt.disabled = false;
         if (ENGINE_SIZES.includes('Elektrikli')) engineSel.value = 'Elektrikli';
         aspirationSel.value = 'Elektrik Motoru';
         engineSel.disabled = true;
@@ -3501,6 +3566,10 @@
         aspirationSel.disabled = false;
         if (engineSel.value === 'Elektrikli') engineSel.value = '1.6L';
         if (aspirationSel.value === 'Elektrik Motoru') aspirationSel.value = 'Atmosferik';
+        // Elektrik dışı bir yakıt tipinde "Elektrikli" / "Elektrik Motoru"
+        // seçeneklerinin manuel olarak seçilmesini engelle.
+        if (engineElectricOpt) engineElectricOpt.disabled = true;
+        if (aspElectricOpt) aspElectricOpt.disabled = true;
       }
     }
 
@@ -3602,6 +3671,37 @@
     }
     function removeUploadedImage(idx) { currentUploadedImages.splice(idx, 1); if (currentSelectedThumbnailIndex >= currentUploadedImages.length) currentSelectedThumbnailIndex = 0;
       renderImagePreviews(); }
+
+    // ----- YOUTUBE VİDEO EKLEME -----
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      const m = url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      return m ? m[1] : null;
+    }
+    function addVideoUrl() {
+      const input = $('postVideoUrlInput');
+      const url = input.value.trim();
+      if (!url) return;
+      if (currentUploadedVideos.length >= 10) { showToast("En fazla 10 video ekleyebilirsiniz!", 'error'); return; }
+      const id = extractYouTubeId(url);
+      if (!id) { showToast("Geçerli bir YouTube linki girin!", 'error'); return; }
+      if (currentUploadedVideos.includes(id)) { showToast("Bu video zaten eklenmiş.", 'warning'); input.value = ''; return; }
+      currentUploadedVideos.push(id);
+      input.value = '';
+      renderVideoPreviews();
+    }
+    function removeUploadedVideo(idx) { currentUploadedVideos.splice(idx, 1);
+      renderVideoPreviews(); }
+    function renderVideoPreviews() {
+      const c = $('videoPreviewContainer');
+      c.innerHTML = '';
+      currentUploadedVideos.forEach((vid, i) => {
+        const w = document.createElement('div');
+        w.className = 'preview-thumb-wrapper preview-thumb-video';
+        w.innerHTML = `<img src="https://img.youtube.com/vi/${vid}/mqdefault.jpg" class="preview-thumb" loading="lazy"><div class="gthumb-play">▶</div><button type="button" class="remove-thumb" onclick="event.stopPropagation(); removeUploadedVideo(${i})">&times;</button>`;
+        c.appendChild(w);
+      });
+    }
 
     // ----- PROFİL FOTOĞRAFI -----
     async function previewAvatar(event) {
@@ -4225,6 +4325,8 @@
       currentUploadedImages = [];
       currentSelectedThumbnailIndex = 0;
       $('imagePreviewContainer').innerHTML = '';
+      currentUploadedVideos = [];
+      $('videoPreviewContainer').innerHTML = '';
       $('postForm').reset();
       $('modLinkGroup').style.display = 'none';
       $('postWeight').value = 1450;
@@ -4268,6 +4370,8 @@
       currentUploadedImages = ad.images ? [...ad.images] : [];
       currentSelectedThumbnailIndex = ad.thumbnailIndex || 0;
       renderImagePreviews();
+      currentUploadedVideos = ad.videos ? [...ad.videos] : [];
+      renderVideoPreviews();
       populateEngineSelects();
       applyFuelDependentLocks();
       closeDetailModal();
@@ -4300,6 +4404,7 @@
         sellerType: $('postSellerType').value,
         images: currentUploadedImages,
         thumbnailIndex: currentSelectedThumbnailIndex,
+        videos: currentUploadedVideos,
         ownerId: currentUser.uid,
         ownerDisplayName: currentUserProfile.displayName || currentUserProfile.uniqueName,
         ownerUniqueName: currentUserProfile.uniqueName || 'user' + currentUser.uid.slice(0, 4),
@@ -4323,6 +4428,8 @@
       $('postForm').reset();
       $('imagePreviewContainer').innerHTML = '';
       currentUploadedImages = [];
+      $('videoPreviewContainer').innerHTML = '';
+      currentUploadedVideos = [];
       editingAdId = null;
       toggleBrandList();
       populateEngineSelects();
@@ -4451,6 +4558,56 @@
       } catch (e) { showToast("Hata: " + e.message, 'error'); }
     }
 
+    // ----- İLAN DEVRETME -----
+    let transferAdId = null;
+    function openTransferAdModal(adId) {
+      const ad = adsData.find(a => a.id === adId);
+      if (!ad) return;
+      if (!currentUser) { showToast("Giriş yapın!", 'warning'); return; }
+      const isAdminUser = isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile);
+      if (ad.ownerId !== currentUser.uid && !isAdminUser) { showToast("Bu işlem için yetkiniz yok.", 'error'); return; }
+      transferAdId = adId;
+      $('transferAdInfo').textContent = `"${ad.title}" ilanını devretmek istediğiniz kullanıcının kullanıcı adını girin.`;
+      $('transferAdUsername').value = '';
+      $('transferAdModal').classList.add('active');
+    }
+    function closeTransferAdModal() { $('transferAdModal').classList.remove('active');
+      transferAdId = null; }
+    async function confirmTransferAd() {
+      if (!transferAdId || !currentUser) return;
+      const ad = adsData.find(a => a.id === transferAdId);
+      if (!ad) { closeTransferAdModal(); return; }
+      const isAdminUser = isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile);
+      if (ad.ownerId !== currentUser.uid && !isAdminUser) { showToast("Bu işlem için yetkiniz yok.", 'error'); return; }
+      const uname = $('transferAdUsername').value.trim().toLowerCase().replace(/^@/, '');
+      if (!uname) { showToast("Kullanıcı adı girin!", 'warning'); return; }
+      if (!isValidUniqueName(uname)) { showToast("Geçersiz kullanıcı adı!", 'error'); return; }
+      let targetUid;
+      try { targetUid = await findUidByUniqueName(uname); } catch (e) { showToast("Kullanıcı aranırken hata oluştu: " + e.message, 'error'); return; }
+      if (!targetUid) { showToast("Böyle bir kullanıcı bulunamadı!", 'error'); return; }
+      if (targetUid === ad.ownerId) { showToast("İlan zaten bu kullanıcıya ait.", 'warning'); return; }
+      if (!confirm(`"${ad.title}" ilanını "@${uname}" kullanıcısına devretmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) return;
+      try {
+        const targetSnap = await db.ref('users/' + targetUid).once('value');
+        const targetData = targetSnap.val() || {};
+        const prevOwnerId = ad.ownerId;
+        const prevOwnerName = ad.ownerUniqueName || 'user' + (prevOwnerId ? prevOwnerId.slice(0, 4) : '');
+        await db.ref('ads/' + transferAdId).update({
+          ownerId: targetUid,
+          ownerDisplayName: targetData.displayName || targetData.uniqueName || 'Kullanıcı',
+          ownerUniqueName: targetData.uniqueName || 'user' + targetUid.slice(0, 4),
+          ownerAvatar: targetData.avatar || DEFAULT_AVATAR,
+        });
+        pushNotification(targetUid, 'ad_transfer_received', `"${ad.title}" ilanı @${prevOwnerName} tarafından size devredildi! 🔄`, '🔄', { adId: transferAdId });
+        if (prevOwnerId && prevOwnerId !== currentUser.uid) {
+          pushNotification(prevOwnerId, 'ad_transfer_sent', `"${ad.title}" ilanınız @${uname} kullanıcısına devredildi.`, '🔄', { adId: transferAdId });
+        }
+        showToast("✅ İlan devredildi!", 'success');
+        closeTransferAdModal();
+        closeDetailModal();
+      } catch (e) { showToast("Hata: " + e.message, 'error'); }
+    }
+
     // ----- RAPOR ETME MODALI -----
     let reportTargetData = {};
 
@@ -4544,7 +4701,10 @@
       $('detailTitle').textContent = ad.title;
       $('detailTimeAgo').textContent = `Yayınlanma: ${timeAgo(ad.createdAt)}`;
       $('detailViewCount').textContent = `👁️ ${ad.views || 0}`;
-      galleryImages = ad.images || ['https://placehold.co/400'];
+      galleryItems = [
+        ...((ad.images && ad.images.length) ? ad.images : ['https://placehold.co/400']).map(src => ({ type: 'image', src })),
+        ...((ad.videos || []).map(id => ({ type: 'video', id })))
+      ];
       currentGalleryIndex = ad.thumbnailIndex || 0;
       updateGalleryDisplay();
       const pcArea = $('detailPcArea');
@@ -4586,6 +4746,7 @@
         actionArea.innerHTML = `
           <button onclick="openEditModal('${escapeHtml(ad.id)}')" class="btn-action btn" style="font-size:0.8rem;text-align:center;">✏️ İlanı Düzenle</button>
           <button onclick="toggleAdVisibility('${escapeHtml(ad.id)}')" class="btn-action btn" style="font-size:0.8rem;text-align:center;">${visLabel}</button>
+          <button onclick="openTransferAdModal('${escapeHtml(ad.id)}')" class="btn-action btn" style="font-size:0.8rem;text-align:center;">🔄 İlanı Devret</button>
           <button onclick="deleteAd('${escapeHtml(ad.id)}')" class="btn-action btn-danger" style="font-size:0.8rem;text-align:center;">🗑️ İlanı Sil</button>
         `;
       }
@@ -4620,7 +4781,7 @@
       }
     }
 
-    function closeDetailModal() { $('detailModal').classList.remove('active'); if (detailViewTimeout) clearTimeout(detailViewTimeout); if (history.state && history.state.adId) history.pushState({}, '', location.pathname); }
+    function closeDetailModal() { $('detailModal').classList.remove('active'); const dv = $('detailMainVideo'); if (dv) dv.src = ''; if (detailViewTimeout) clearTimeout(detailViewTimeout); if (history.state && history.state.adId) history.pushState({}, '', location.pathname); }
 
     function renderEmbedView(raw) {
       const el = document.getElementById('embedView');
@@ -4764,35 +4925,92 @@
     });
 
 
+    // origin/referrer eksikliğinden kaynaklanan YouTube "153" yapılandırma
+    // hatasını önlemek için embed URL'sini güvenli parametrelerle oluşturur.
+    function buildYoutubeEmbedUrl(id, autoplay) {
+      // NOT: "origin" parametresi, sayfanın gerçek adresiyle birebir
+      // eşleşmediği durumlarda (iframe içinde önizleme, farklı bir üst
+      // domain, vb.) YouTube'un "153 - video oynatıcı yapılandırma hatası"
+      // vermesine sebep oluyor. Bu yüzden bilerek eklenmiyor; YouTube
+      // referrer bilgisini tarayıcıdan otomatik alıyor.
+      const params = new URLSearchParams();
+      params.set('rel', '0');
+      params.set('modestbranding', '1');
+      params.set('playsinline', '1');
+      if (autoplay) params.set('autoplay', '1');
+      return `https://www.youtube.com/embed/${id}?${params.toString()}`;
+    }
+
     function updateGalleryDisplay() {
       const main = $('detailMainImg');
-      if (galleryImages.length) main.src = galleryImages[currentGalleryIndex] || galleryImages[0];
+      const mainVideo = $('detailMainVideo');
+      const item = galleryItems[currentGalleryIndex] || galleryItems[0];
+      if (item && item.type === 'video') {
+        mainVideo.src = buildYoutubeEmbedUrl(item.id, false);
+        mainVideo.style.display = '';
+        main.style.display = 'none';
+      } else {
+        mainVideo.src = '';
+        mainVideo.style.display = 'none';
+        main.style.display = '';
+        if (item) main.src = item.src;
+      }
       const thumbs = $('detailThumbnails');
       thumbs.innerHTML = '';
-      galleryImages.forEach((src, i) => {
-        const img = document.createElement('img');
-        img.src = src;
-        if (i === currentGalleryIndex) img.className = 'active-thumb';
-        img.onclick = () => { currentGalleryIndex = i;
+      galleryItems.forEach((it, i) => {
+        const w = document.createElement('div');
+        w.className = `gthumb-item ${i === currentGalleryIndex ? 'active-thumb' : ''}`;
+        w.onclick = () => { currentGalleryIndex = i;
           updateGalleryDisplay(); };
-        thumbs.appendChild(img);
+        if (it.type === 'video') {
+          w.innerHTML = `<img src="https://img.youtube.com/vi/${it.id}/mqdefault.jpg" loading="lazy"><div class="gthumb-play">▶</div>`;
+        } else {
+          w.innerHTML = `<img src="${escapeHtml(it.src)}" loading="lazy">`;
+        }
+        thumbs.appendChild(w);
       });
     }
 
-    function navigateGallery(d) { if (!galleryImages.length) return;
-      currentGalleryIndex = (currentGalleryIndex + d + galleryImages.length) % galleryImages.length;
+    function navigateGallery(d) { if (!galleryItems.length) return;
+      currentGalleryIndex = (currentGalleryIndex + d + galleryItems.length) % galleryItems.length;
       updateGalleryDisplay(); }
 
-    function openLightbox(idx) { if (!galleryImages.length) return; const i = idx !== undefined ? idx : currentGalleryIndex;
-      $('lightboxImg').src = galleryImages[i] || galleryImages[0];
+    function openLightbox(idx) { if (!galleryItems.length) return; const i = idx !== undefined ? idx : currentGalleryIndex;
+      const item = galleryItems[i] || galleryItems[0];
+      const lbImg = $('lightboxImg');
+      const lbVideo = $('lightboxVideo');
+      if (item.type === 'video') {
+        lbVideo.src = buildYoutubeEmbedUrl(item.id, true);
+        lbVideo.style.display = '';
+        lbImg.style.display = 'none';
+      } else {
+        lbVideo.src = '';
+        lbVideo.style.display = 'none';
+        lbImg.style.display = '';
+        lbImg.src = item.src;
+      }
       $('lightboxModal').classList.add('active');
       window.lightboxIndex = i; }
 
-    function closeLightbox() { $('lightboxModal').classList.remove('active'); }
+    function closeLightbox() { $('lightboxModal').classList.remove('active');
+      $('lightboxVideo').src = ''; }
 
-    function navigateLightbox(d) { if (!galleryImages.length) return; let idx = (window.lightboxIndex || 0) + d; if (idx < 0) idx = galleryImages.length - 1; if (idx >= galleryImages.length) idx = 0;
+    function navigateLightbox(d) { if (!galleryItems.length) return; let idx = (window.lightboxIndex || 0) + d; if (idx < 0) idx = galleryItems.length - 1; if (idx >= galleryItems.length) idx = 0;
       window.lightboxIndex = idx;
-      $('lightboxImg').src = galleryImages[idx]; }
+      const item = galleryItems[idx];
+      const lbImg = $('lightboxImg');
+      const lbVideo = $('lightboxVideo');
+      if (item.type === 'video') {
+        lbVideo.src = buildYoutubeEmbedUrl(item.id, true);
+        lbVideo.style.display = '';
+        lbImg.style.display = 'none';
+      } else {
+        lbVideo.src = '';
+        lbVideo.style.display = 'none';
+        lbImg.style.display = '';
+        lbImg.src = item.src;
+      }
+    }
 
     // ----- MOD İNDİRME ONAY -----
     function openModConfirmModal(url) { $('modConfirmLinkDisplay').textContent = url;
@@ -5338,6 +5556,7 @@
               <button onclick="closeAdminModal(); openEditModal('${escapeHtml(ad.id)}')" class="btn" style="padding:0.3rem 0.6rem;font-size:0.75rem;border-color:#3b82f6;color:#93c5fd;">✏️ Düzenle</button>
               ${approveBtn}
               ${visBtn}
+              <button onclick="closeAdminModal(); openTransferAdModal('${escapeHtml(ad.id)}')" class="btn" style="padding:0.3rem 0.6rem;font-size:0.75rem;">🔄 Devret</button>
               <button onclick="adminDeleteAd('${escapeHtml(ad.id)}')" class="btn-danger" style="padding:0.3rem 0.6rem;border-radius:6px;font-size:0.75rem;">Sil</button>
             </div>
           </div>
@@ -5670,6 +5889,7 @@
     populateFilterBrands();
     toggleBrandList();
     populateEngineSelects();
+    applyFuelDependentLocks();
     renderRecentlyViewed();
     updateDesktopNotifRow();
     startPunishmentsCache();
