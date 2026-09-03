@@ -623,6 +623,9 @@
       object-fit: cover;
       border: 3px solid var(--accent);
     }
+    .car-part-shape { transition: opacity .15s, filter .15s; }
+    .car-part-interactive { cursor: pointer; }
+    .car-part-interactive:hover { opacity: .82; filter: brightness(1.1); }
     .pp-nickname {
       font-size: 1.1rem;
       font-weight: 700;
@@ -1286,7 +1289,7 @@
     .main-detail-img {
       width: 100%;
       height: 340px;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 8px;
       background: #121419;
       cursor: zoom-in;
@@ -2836,9 +2839,8 @@
       <form id="profileForm" onsubmit="handleUpdateProfile(event)" style="display:flex;flex-direction:column;gap:1rem;">
         <div style="text-align:center;"><img id="profileModalAvatar" src="https://ui-avatars.com/api/?name=User&background=random&size=80" alt="Avatar" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);margin-bottom:.5rem;"><input type="file" id="profileAvatarFile" accept="image/*" onchange="previewAvatar(event)" style="display:block;margin:0 auto;font-size:.8rem;color:var(--muted);"></div>
         <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--accent);">
-          <h4 style="font-size:.9rem;color:var(--accent);margin-bottom:.5rem;">✏️ Benzersiz İsim Değiştirme (1 Kere)</h4>
+          <h4 style="font-size:.9rem;color:var(--accent);margin-bottom:.5rem;">✏️ Benzersiz İsim Değiştirme</h4>
           <div style="display:flex;gap:8px;align-items:center;"><input type="text" id="changeUniqueNameInput" class="filter-input" placeholder="Yeni benzersiz isim (küçük harf)" style="flex:1;" pattern="[a-z0-9_-]+"><button type="button" onclick="changeUniqueName()" class="btn-action btn-primary" style="width:auto;padding:.5rem 1rem;font-size:.8rem;">Değiştir</button></div>
-          <div style="font-size:.65rem;color:var(--muted);margin-top:4px;">⚠️ Bu işlem sadece 1 kez yapılabilir!</div>
           <div id="nameChangeStatus" style="font-size:.7rem;color:var(--muted);margin-top:4px;"></div>
         </div>
         <div><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">MEVCUT BENZERSİZ KULLANICI ADI</label><input type="text" id="profileUniqueName" class="filter-input" disabled style="opacity:.6;"></div>
@@ -3024,6 +3026,17 @@
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><label style="color:#fff;font-size:.85rem;font-weight:600;">Hasar Durumu</label><label style="background:#7f1d1d;color:#fca5a5;padding:3px 8px;border-radius:6px;border:1px solid #ef4444;font-weight:700;font-size:.75rem;display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="postIsPert" style="cursor:pointer;" onchange="togglePertState()"> Ağır Hasar (Pert)</label></div>
             <select id="postDamageStatus" class="filter-select"><option value="🟢 Hatasız / Boyasız">🟢 Hatasız / Boyasız</option><option value="🟡 Çizik / Lokal Boyalı">🟡 Çizik / Lokal Boyalı</option><option value="🟠 Parça Değişenli / Hafif Hasarlı">🟠 Parça Değişenli / Hafif Hasarlı</option><option value="🔴 Projelik / Kazalı">🔴 Projelik / Kazalı</option></select>
           </div>
+          <div class="form-group full-width parts-damage-box" style="border:1px solid var(--border);padding:12px;border-radius:8px;background:var(--bg);">
+            <label style="display:block;margin-bottom:.4rem;font-size:.85rem;color:#fff;font-weight:600;">🚗 Kaporta Parça Durumu <span style="color:var(--muted);font-weight:400;font-size:.75rem;">(bu özellik şu anda devre dışı, yakında aktif olacak)</span></label>
+            <div id="postCarDiagramWrap" style="opacity:.7;pointer-events:none;"></div>
+            <div id="postPartsSelectedLabel" style="text-align:center;font-size:.8rem;color:var(--muted);margin-top:8px;min-height:1.1em;">🔒 Şu anda kullanıma kapalı</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px;font-size:.72rem;color:var(--muted);">
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#22c55e;margin-right:4px;"></span>Hasarsız</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#eab308;margin-right:4px;"></span>Boyalı</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f97316;margin-right:4px;"></span>Lokal Boyalı</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#ef4444;margin-right:4px;"></span>Ağır Hasarlı</span>
+            </div>
+          </div>
           <div class="form-group full-width" style="border:1px solid var(--border);padding:12px;border-radius:8px;background:var(--bg);"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">BEAMNG .PC DOSYASI (İsteğe Bağlı)</label><input type="file" id="postPcFile" class="filter-input" accept=".pc"></div>
           <div class="form-group full-width"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;"><label style="font-size:.8rem;color:var(--muted);">FOTOĞRAFLAR (Kapak için görsele tıklayın)</label><button type="button" onclick="document.getElementById('postImagesFile').click()" class="btn" style="padding:.2rem .5rem;font-size:.75rem;">+ Ekle</button></div><input type="file" id="postImagesFile" class="filter-input" accept="image/*" multiple onchange="handleMultipleImages(event)" style="display:none;"><div id="imagePreviewContainer" class="preview-container"></div></div>
           <div class="form-group full-width"><label style="display:block;margin-bottom:.3rem;font-size:.8rem;color:var(--muted);">YOUTUBE VİDEOLARI (İsteğe Bağlı)</label><div style="display:flex;gap:.4rem;"><input type="text" id="postVideoUrlInput" class="filter-input" placeholder="YouTube video linkini yapıştırın..." style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addVideoUrl();}"><button type="button" onclick="addVideoUrl()" class="btn" style="padding:.4rem .8rem;font-size:.8rem;white-space:nowrap;">+ Ekle</button></div><div id="videoPreviewContainer" class="preview-container"></div></div>
@@ -3050,6 +3063,11 @@
         <div>
           <div id="detailSpecs" style="display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--muted);margin-bottom:1rem;"></div>
           <div id="detailDescriptionContainer" style="margin-bottom:1rem;background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--border);display:none;"><div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:3px;text-transform:uppercase;">Açıklama</div><div id="detailDescription" style="font-size:.85rem;color:var(--text);white-space:pre-wrap;"></div></div>
+          <div id="detailPartsDamageContainer" style="margin-bottom:1rem;background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--border);display:none;">
+            <div style="font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;">🚗 Kaporta Parça Durumu</div>
+            <div id="detailCarDiagramWrap"></div>
+            <div id="detailPartsDamageGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:10px;"></div>
+          </div>
           <div style="background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
             <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="openPublicProfile(currentSelectedAd?.ownerId)"><div class="avatar-wrap"><img id="detailSellerAvatar" src="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" alt="Satıcı"><span class="online-dot" id="detailSellerOnlineDot"></span></div><div><div id="detailSellerName" style="font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;font-size:.9rem;"></div><div id="detailSellerUniqueName" style="font-size:.65rem;color:var(--muted);">@...</div><div id="detailSellerAccountDate" style="font-size:.7rem;color:var(--muted);">Kayıt: ...</div></div></div>
             <div style="display:flex;gap:6px;align-items:center;"><span id="detailSellerTypeBadge" style="background:var(--card);padding:2px 8px;border-radius:4px;font-size:.65rem;border:1px solid var(--border);"></span><button onclick="openReportModal('ad', currentSelectedAd?.id, currentSelectedAd?.title, currentSelectedAd?.ownerId)" style="background:none;border:none;color:#ef4444;font-size:.75rem;cursor:pointer;">🚨 Rapor Et</button></div>
@@ -3102,6 +3120,120 @@
     let adminUidCache = null;
 
     const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=random&size=80";
+    // ===== KAPORTA PARÇA HASAR DURUMU (tıklanabilir araç diyagramı) =====
+    const CAR_PART_LIST = [
+      { id: 'onTampon', label: 'Ön Tampon' },
+      { id: 'arkaTampon', label: 'Arka Tampon' },
+      { id: 'kaput', label: 'Kaput' },
+      { id: 'bagaj', label: 'Bagaj Kapağı' },
+      { id: 'tavan', label: 'Tavan' },
+      { id: 'solOnCamurluk', label: 'Sol Ön Çamurluk' },
+      { id: 'sagOnCamurluk', label: 'Sağ Ön Çamurluk' },
+      { id: 'solArkaCamurluk', label: 'Sol Arka Çamurluk' },
+      { id: 'sagArkaCamurluk', label: 'Sağ Arka Çamurluk' },
+      { id: 'solOnKapi', label: 'Sol Ön Kapı' },
+      { id: 'sagOnKapi', label: 'Sağ Ön Kapı' },
+      { id: 'solArkaKapi', label: 'Sol Arka Kapı' },
+      { id: 'sagArkaKapi', label: 'Sağ Arka Kapı' },
+    ];
+    const PART_DAMAGE_OPTIONS = ['Hasarsız', 'Boyalı', 'Lokal Boyalı', 'Ağır Hasarlı'];
+    // Her parçanın üstten görünüşte (top-down), gerçek bir araç siluetine benzeyen eğrisel şekli. viewBox: 0 0 300 480
+    const CAR_PART_SVG_DEFS = {
+      onTampon: { tag: 'path', attrs: 'd="M118,18 C118,7 130,2 150,2 C170,2 182,7 182,18 L182,46 C182,52 176,56 168,56 L132,56 C124,56 118,52 118,46 Z"' },
+      kaput: { tag: 'path', attrs: 'd="M124,58 C110,84 100,118 97,150 C96,159 103,165 114,165 L186,165 C197,165 204,159 203,150 C200,118 190,84 176,58 C167,64 133,64 124,58 Z"' },
+      tavan: { tag: 'rect', attrs: 'x="106" y="167" width="88" height="146" rx="22"' },
+      bagaj: { tag: 'path', attrs: 'd="M114,315 C103,315 96,321 97,330 C100,362 110,396 124,422 C133,416 167,416 176,422 C190,396 200,362 203,330 C204,321 197,315 186,315 Z"' },
+      arkaTampon: { tag: 'path', attrs: 'd="M132,424 C124,424 118,428 118,434 L118,456 C118,467 130,472 150,472 C170,472 182,467 182,456 L182,434 C182,428 176,424 168,424 Z"' },
+      solOnCamurluk: { tag: 'path', attrs: 'd="M96,60 C68,63 34,72 20,88 C10,99 8,120 12,136 C16,148 24,157 36,161 C55,167 78,168 96,168 Z"' },
+      sagOnCamurluk: { tag: 'path', attrs: 'd="M204,60 C232,63 266,72 280,88 C290,99 292,120 288,136 C284,148 276,157 264,161 C245,167 222,168 204,168 Z"' },
+      solOnKapi: { tag: 'path', attrs: 'd="M28,169 C18,169 10,175 10,183 L10,244 C10,252 18,258 28,258 L96,258 L96,169 Z"' },
+      sagOnKapi: { tag: 'path', attrs: 'd="M272,169 C282,169 290,175 290,183 L290,244 C290,252 282,258 272,258 L204,258 L204,169 Z"' },
+      solArkaKapi: { tag: 'path', attrs: 'd="M28,313 C18,313 10,307 10,299 L10,262 C10,254 18,260 28,260 L96,260 L96,313 Z"' },
+      sagArkaKapi: { tag: 'path', attrs: 'd="M272,313 C282,313 290,307 290,299 L290,262 C290,254 282,260 272,260 L204,260 L204,313 Z"' },
+      solArkaCamurluk: { tag: 'path', attrs: 'd="M96,315 C78,315 55,316 36,322 C24,326 16,335 12,347 C8,363 10,384 20,395 C34,411 68,420 96,423 Z"' },
+      sagArkaCamurluk: { tag: 'path', attrs: 'd="M204,315 C222,315 245,316 264,322 C276,326 284,335 288,347 C292,363 290,384 280,395 C266,411 232,420 204,423 Z"' },
+    };
+    function getDefaultPartsDamage() {
+      const obj = {};
+      CAR_PART_LIST.forEach(p => { obj[p.id] = 'Hasarsız'; });
+      return obj;
+    }
+    function partStatusColor(status) {
+      switch (status) {
+        case 'Boyalı': return '#eab308';
+        case 'Lokal Boyalı': return '#f97316';
+        case 'Ağır Hasarlı': return '#ef4444';
+        default: return '#22c55e';
+      }
+    }
+    function partStatusEmoji(status) {
+      switch (status) {
+        case 'Boyalı': return '🟡';
+        case 'Lokal Boyalı': return '🟠';
+        case 'Ağır Hasarlı': return '🔴';
+        default: return '🟢';
+      }
+    }
+    function partDamageColor(status) { return partStatusEmoji(status); }
+    function buildCarDiagramSVG(stateObj, interactive) {
+      const data = stateObj || getDefaultPartsDamage();
+      const wheels = `
+        <g fill="#3f3f46" stroke="#18181b" stroke-width="2">
+          <circle cx="28" cy="97" r="24"/><circle cx="272" cy="97" r="24"/>
+          <circle cx="28" cy="369" r="24"/><circle cx="272" cy="369" r="24"/>
+        </g>
+        <g fill="#9ca3af">
+          <circle cx="28" cy="97" r="10"/><circle cx="272" cy="97" r="10"/>
+          <circle cx="28" cy="369" r="10"/><circle cx="272" cy="369" r="10"/>
+        </g>`;
+      const partsSvg = CAR_PART_LIST.map(p => {
+        const status = data[p.id] || 'Hasarsız';
+        const color = partStatusColor(status);
+        const def = CAR_PART_SVG_DEFS[p.id];
+        const cls = interactive ? 'car-part-shape car-part-interactive' : 'car-part-shape';
+        return `<${def.tag} ${def.attrs} fill="${color}" class="${cls}" data-part="${p.id}"><title>${escapeHtml(p.label)}: ${escapeHtml(status)}</title></${def.tag}>`;
+      }).join('');
+      return `<svg viewBox="0 0 300 480" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:260px;display:block;margin:0 auto;">
+        ${wheels}
+        <g stroke="#111827" stroke-width="2.5" stroke-linejoin="round">${partsSvg}</g>
+      </svg>`;
+    }
+    let postPartsDamageState = getDefaultPartsDamage();
+    // Bu özellik şu an devre dışı: ilan verirken görünür ama parçalara tıklanamaz.
+    // Tekrar aktif etmek için PARTS_DAMAGE_FEATURE_ENABLED değerini true yapmak yeterli.
+    const PARTS_DAMAGE_FEATURE_ENABLED = false;
+    function renderPartsDamageEditor(values) {
+      postPartsDamageState = values ? { ...getDefaultPartsDamage(), ...values } : getDefaultPartsDamage();
+      const wrap = $('postCarDiagramWrap');
+      if (!wrap) return;
+      wrap.innerHTML = buildCarDiagramSVG(postPartsDamageState, PARTS_DAMAGE_FEATURE_ENABLED);
+      const label = $('postPartsSelectedLabel');
+      if (label) label.textContent = PARTS_DAMAGE_FEATURE_ENABLED ? 'Bir parçaya tıklayın' : '🔒 Şu anda kullanıma kapalı';
+      if (!PARTS_DAMAGE_FEATURE_ENABLED) return;
+      const svg = wrap.querySelector('svg');
+      if (svg && !svg.dataset.bound) {
+        svg.dataset.bound = '1';
+        svg.addEventListener('click', (e) => {
+          const partId = e.target && e.target.dataset && e.target.dataset.part;
+          if (!partId) return;
+          cyclePartDamage(partId);
+        });
+      }
+    }
+    function cyclePartDamage(partId) {
+      if (!PARTS_DAMAGE_FEATURE_ENABLED) return;
+      const current = postPartsDamageState[partId] || 'Hasarsız';
+      const idx = PART_DAMAGE_OPTIONS.indexOf(current);
+      const next = PART_DAMAGE_OPTIONS[(idx + 1) % PART_DAMAGE_OPTIONS.length];
+      postPartsDamageState[partId] = next;
+      renderPartsDamageEditor(postPartsDamageState);
+      const partInfo = CAR_PART_LIST.find(p => p.id === partId);
+      const label = $('postPartsSelectedLabel');
+      if (label && partInfo) label.textContent = `${partInfo.label}: ${partStatusEmoji(next)} ${next}`;
+    }
+    function collectPartsDamage() {
+      return { ...postPartsDamageState };
+    }
     // Eski hatalı kayıtlarda bazı hesapların isim/avatar alanı gerçek "undefined" değeri yerine
     // "undefined" METNİ olarak kaydedilmişti. Normal "a || b" bunu YAKALAYAMAZ çünkü "undefined"
     // dolu (truthy) bir string'dir. Bu fonksiyon eksik/boş/"undefined"/"null" değerleri aynı
@@ -3860,7 +3992,6 @@
 
     async function changeUniqueName() {
       if (!currentUser) { showToast("Giriş yapmalısınız!", 'warning'); return; }
-      if (currentUserProfile.nameChangeUsed) { showToast("❌ Hakkınızı kullandınız!", 'error'); return; }
       let newName = $('changeUniqueNameInput').value.trim().toLowerCase();
       if (!newName) { showToast("Yeni isim girin!", 'warning'); return; }
       if (!isValidUniqueName(newName)) { showToast("Geçersiz karakter! Sadece küçük harf, rakam, - ve _", 'error'); return; }
@@ -3868,13 +3999,11 @@
       if (check.exists()) { showToast("Bu isim alınmış!", 'error'); return; }
       try {
         await db.ref('users/' + currentUser.uid + '/uniqueName').set(newName);
-        await db.ref('users/' + currentUser.uid + '/nameChangeUsed').set(true);
         currentUserProfile.uniqueName = newName;
-        currentUserProfile.nameChangeUsed = true;
         showToast("✅ Benzersiz isim değiştirildi: " + newName, 'success');
         $('changeUniqueNameInput').value = '';
         $('profileUniqueName').value = newName;
-        $('nameChangeStatus').textContent = '✅ Değiştirildi!';
+        $('nameChangeStatus').textContent = '✅ Değiştirildi! Dilediğiniz zaman tekrar değiştirebilirsiniz.';
         $('nameChangeStatus').style.color = '#4ade80';
         pushNotification(currentUser.uid, 'name_change', `Benzersiz isminiz "${newName}" olarak değiştirildi.`, '✏️');
         syncMyAdsOwnerInfo();
@@ -3894,13 +4023,10 @@
       if (currentUserProfile.email && currentUserProfile.emailVerified) { statusEl.innerHTML = '<span class="email-verified">✅ Onaylı</span>'; } else if (currentUserProfile.email) { statusEl.innerHTML = '<span class="email-unverified">⏳ Onaysız (Doğrulama e-postası gönder)</span>'; } else { statusEl.innerHTML = '<span class="email-unverified">❌ E-posta eklenmemiş</span>'; }
       const inp = $('changeUniqueNameInput');
       const status = $('nameChangeStatus');
-      if (currentUserProfile.nameChangeUsed) { inp.placeholder = '❌ Hakkınızı kullandınız';
-        inp.disabled = true;
-        status.textContent = '❌ Değiştirme hakkı kullanıldı';
-        status.style.color = '#ef4444'; } else { inp.placeholder = 'Yeni benzersiz isim (küçük harf)';
-        inp.disabled = false;
-        status.textContent = '✅ Değiştirme hakkınız mevcut';
-        status.style.color = '#4ade80'; }
+      inp.placeholder = 'Yeni benzersiz isim (küçük harf)';
+      inp.disabled = false;
+      status.textContent = '✅ İstediğiniz zaman değiştirebilirsiniz';
+      status.style.color = '#4ade80';
       $('profileModal').classList.add('active');
       renderBlockedUsers();
     }
@@ -4333,6 +4459,7 @@
       toggleBrandList();
       populateEngineSelects();
       applyFuelDependentLocks();
+      renderPartsDamageEditor();
       $('postModal').classList.add('active');
     }
 
@@ -4367,6 +4494,7 @@
       const ds = $('postDamageStatus');
       ds.value = ad.damageStatus || "🟢 Hatasız / Boyasız";
       ds.disabled = isPert;
+      renderPartsDamageEditor(ad.partsDamage || getDefaultPartsDamage());
       currentUploadedImages = ad.images ? [...ad.images] : [];
       currentSelectedThumbnailIndex = ad.thumbnailIndex || 0;
       renderImagePreviews();
@@ -4401,6 +4529,7 @@
         aspiration: $('postAspiration').value,
         damageStatus: $('postDamageStatus').value,
         isPert: $('postIsPert').checked,
+        partsDamage: collectPartsDamage(),
         sellerType: $('postSellerType').value,
         images: currentUploadedImages,
         thumbnailIndex: currentSelectedThumbnailIndex,
@@ -4434,6 +4563,7 @@
       toggleBrandList();
       populateEngineSelects();
       applyFuelDependentLocks();
+      renderPartsDamageEditor();
       closePostModal();
     }
 
@@ -4729,6 +4859,15 @@
       const descBox = $('detailDescriptionContainer');
       if (ad.description) { $('detailDescription').textContent = ad.description;
         descBox.style.display = 'block'; } else descBox.style.display = 'none';
+      const partsBox = $('detailPartsDamageContainer');
+      if (ad.partsDamage && Object.keys(ad.partsDamage).length) {
+        $('detailCarDiagramWrap').innerHTML = buildCarDiagramSVG(ad.partsDamage, false);
+        $('detailPartsDamageGrid').innerHTML = CAR_PART_LIST.map(p => {
+          const status = ad.partsDamage[p.id] || 'Hasarsız';
+          return `<div style="font-size:.75rem;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 7px;display:flex;justify-content:space-between;gap:6px;"><span style="color:var(--muted);">${escapeHtml(p.label)}</span><strong>${partDamageColor(status)} ${escapeHtml(status)}</strong></div>`;
+        }).join('');
+        partsBox.style.display = 'block';
+      } else partsBox.style.display = 'none';
       const displayName = safeName(ad.ownerDisplayName, safeName(ad.ownerNickname, 'Anonim'));
       const uniqueName = safeName(ad.ownerUniqueName, null) && ad.ownerUniqueName !== 'unknown' ?
         '@' + ad.ownerUniqueName :
