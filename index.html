@@ -286,6 +286,17 @@
     .btn:active, .btn-post:active, .btn-action:active {
       transform: scale(0.96);
     }
+    @keyframes copyFlashPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+    .btn.copy-flash, .btn-action.copy-flash {
+      background: rgba(34, 197, 94, 0.18) !important;
+      border-color: #22c55e !important;
+      color: #22c55e !important;
+      animation: copyFlashPop 0.35s ease;
+    }
     .btn-primary {
       background: var(--accent-grad);
       color: #fff;
@@ -879,6 +890,9 @@
     .listings-grid .card:nth-child(7) { animation-delay: 0.26s; }
     .listings-grid .card:nth-child(8) { animation-delay: 0.30s; }
     .listings-grid .card:nth-child(n+9) { animation-delay: 0.34s; }
+    .listings-grid.no-entrance-anim .card {
+      animation: none !important;
+    }
     .card::before {
       content: '';
       position: absolute;
@@ -998,13 +1012,22 @@
       justify-content: center;
       cursor: pointer;
       z-index: 5;
-      transition: all 0.2s ease;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
       color: #fff;
       font-size: 1rem;
     }
     .favorite-btn:hover {
       background: rgba(255, 107, 0, 0.9);
       transform: scale(1.1);
+    }
+    @keyframes favPop {
+      0% { transform: scale(1); }
+      30% { transform: scale(1.45) rotate(-8deg); }
+      55% { transform: scale(0.85) rotate(4deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .favorite-btn.fav-animate {
+      animation: favPop 0.5s cubic-bezier(.2,.8,.2,1);
     }
     .favorite-btn.active {
       color: #ef4444;
@@ -1771,6 +1794,60 @@
       font-size: 0.95rem;
       font-weight: 600;
       color: var(--text);
+    }
+
+    /* ===== SKELETON KART (yükleniyor efekti) ===== */
+    @keyframes skeletonShimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-card {
+      background: linear-gradient(180deg, var(--card-2), var(--card));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .skeleton-shimmer {
+      background: linear-gradient(90deg, var(--hover) 25%, var(--border) 37%, var(--hover) 63%);
+      background-size: 400% 100%;
+      animation: skeletonShimmer 1.4s ease-in-out infinite;
+    }
+    .skeleton-card .skeleton-img {
+      height: 178px;
+    }
+    @media(min-width:768px) {
+      .skeleton-card .skeleton-img {
+        height: 198px;
+      }
+    }
+    .skeleton-card .skeleton-body {
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .skeleton-card .skeleton-line {
+      height: 12px;
+      border-radius: 6px;
+    }
+    .skeleton-card .skeleton-line.w-70 { width: 70%; height: 15px; }
+    .skeleton-card .skeleton-line.w-40 { width: 40%; }
+    .skeleton-card .skeleton-tags {
+      display: flex;
+      gap: 6px;
+      margin: 2px 0;
+    }
+    .skeleton-card .skeleton-tag {
+      width: 54px;
+      height: 20px;
+      border-radius: 10px;
+    }
+    .skeleton-card .skeleton-cta {
+      height: 30px;
+      border-radius: 8px;
+      margin-top: 4px;
     }
 
     .admin-tag {
@@ -3061,7 +3138,7 @@
       <p style="font-size:.8rem;color:var(--muted);margin-bottom:.8rem;">Bu kodu kendi sitene / forum mesajına yapıştırarak ilanı küçük bir kart olarak gösterebilirsin.</p>
       <textarea id="embedCodeBox" class="filter-input" readonly style="height:90px;resize:vertical;font-family:monospace;font-size:.75rem;margin-bottom:.8rem;" onclick="this.select()"></textarea>
       <div style="display:flex;gap:.6rem;">
-        <button class="btn-action btn-primary" style="flex:1;text-align:center;" onclick="copyEmbedCode()">📋 Kodu Kopyala</button>
+        <button class="btn-action btn-primary" style="flex:1;text-align:center;" onclick="copyEmbedCode(event)">📋 Kodu Kopyala</button>
         <a id="embedCodePreviewLink" href="#" target="_blank" rel="noopener" class="btn-action btn" style="flex:1;text-align:center;">👁️ Önizle</a>
       </div>
     </div>
@@ -3120,7 +3197,7 @@
   <!-- DETAY MODAL -->
   <div class="modal-overlay" id="detailModal">
     <div class="modal-content" style="max-width:1300px;">
-      <div class="modal-header"><div><h3 id="detailTitle" style="font-size:1.1rem;">İlan Detayı</h3><span id="detailTimeAgo" style="font-size:.7rem;color:var(--muted);"></span><span id="detailViewCount" style="font-size:.7rem;color:var(--muted);margin-left:8px;">👁️ 0</span></div><div style="display:flex;align-items:center;gap:0.5rem;"><button class="btn" id="shareAdBtn" onclick="shareCurrentAd()" title="İlan linkini kopyala">🔗 Linki Kopyala</button><button class="btn" onclick="showEmbedCode(currentSelectedAdId)" title="Başka bir siteye gömülebilir kod al">🖼️ Embed Kodu</button><button class="close-btn" onclick="closeDetailModal()">&times;</button></div></div>
+      <div class="modal-header"><div><h3 id="detailTitle" style="font-size:1.1rem;">İlan Detayı</h3><span id="detailTimeAgo" style="font-size:.7rem;color:var(--muted);"></span><span id="detailViewCount" style="font-size:.7rem;color:var(--muted);margin-left:8px;">👁️ 0</span></div><div style="display:flex;align-items:center;gap:0.5rem;"><button class="btn" id="shareAdBtn" onclick="shareCurrentAd(event)" title="İlan linkini kopyala">🔗 Linki Kopyala</button><button class="btn" onclick="showEmbedCode(currentSelectedAdId)" title="Başka bir siteye gömülebilir kod al">🖼️ Embed Kodu</button><button class="close-btn" onclick="closeDetailModal()">&times;</button></div></div>
       <div class="form-grid" style="align-items:start;">
         <div class="detail-gallery">
           <div style="position:relative;"><img id="detailMainImg" class="main-detail-img" src="" alt="Araç Görseli" onclick="openLightbox(currentGalleryIndex)" title="Tam boyutta incele"><iframe id="detailMainVideo" class="main-detail-img" style="display:none;border:none;" title="Video" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><button class="gallery-nav prev" onclick="navigateGallery(-1)">‹</button><button class="gallery-nav next" onclick="navigateGallery(1)">›</button></div>
@@ -3342,6 +3419,7 @@
     let showOnlyDrafts = false;
     const ADS_PER_PAGE = 8;
     let currentAdsPage = 1;
+    let adsGridHasAnimatedOnce = false;
     let lastAdsFilterSignature = null;
     let notificationsData = [];
     let dmInboxData = {};
@@ -3780,6 +3858,13 @@
       event.stopPropagation();
       if (!currentUser) { showToast("Favorilere eklemek için giriş yapmalısınız!", 'warning');
         openAuthModal(); return; }
+      const btnEl = event.currentTarget || (event.target && event.target.closest('.favorite-btn'));
+      if (btnEl) {
+        btnEl.classList.remove('fav-animate');
+        void btnEl.offsetWidth; // reflow ile animasyonu yeniden tetikle
+        btnEl.classList.add('fav-animate');
+        btnEl.addEventListener('animationend', () => btnEl.classList.remove('fav-animate'), { once: true });
+      }
       if (!currentUserProfile.favorites) currentUserProfile.favorites = [];
       const idx = currentUserProfile.favorites.indexOf(adId);
       const adding = idx === -1;
@@ -3798,7 +3883,13 @@
         await db.ref('users/' + currentUser.uid + '/favorites').set(currentUserProfile.favorites);
         updateFavoritesUI();
         updateDraftCountBadge();
-        renderAds();
+        if (showOnlyFavorites) {
+          renderAds();
+        } else if (btnEl) {
+          const isFavNow = currentUserProfile.favorites.includes(adId);
+          btnEl.classList.toggle('active', isFavNow);
+          btnEl.textContent = isFavNow ? '❤️' : '🤍';
+        }
       } catch (err) { showToast("Hata: " + err.message, 'error'); }
     }
     function updateFavoritesUI() {
@@ -4212,6 +4303,27 @@
     function debouncedRenderAds() { clearTimeout(renderAdsDebounceTimer);
       renderAdsDebounceTimer = setTimeout(renderAds, 150); }
 
+    function skeletonCardsHtml(count) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `
+        <div class="skeleton-card">
+          <div class="skeleton-img skeleton-shimmer"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line w-70 skeleton-shimmer"></div>
+            <div class="skeleton-tags">
+              <div class="skeleton-tag skeleton-shimmer"></div>
+              <div class="skeleton-tag skeleton-shimmer"></div>
+              <div class="skeleton-tag skeleton-shimmer"></div>
+            </div>
+            <div class="skeleton-line w-40 skeleton-shimmer"></div>
+            <div class="skeleton-cta skeleton-shimmer"></div>
+          </div>
+        </div>`;
+      }
+      return html;
+    }
+
     function renderAds() {
       const grid = $('listingsGrid');
       if (!firstAdsLoadDone) {
@@ -4219,10 +4331,10 @@
           grid.innerHTML = '<div class="loading-state"><span style="font-size:2rem;">⚠️</span><h3>İlanlar yüklenemedi</h3><p style="font-size:0.8rem;color:var(--muted);">Bağlantı sorunu olabilir.</p><button class="btn btn-action" onclick="location.reload()">🔄 Tekrar Dene</button></div>';
           $('listingCount').textContent = 'Hata';
         } else if (adsLoadSlow) {
-          grid.innerHTML = '<div class="loading-state"><div class="loader-spinner"></div><h3>İlanlar yükleniyor...</h3><p style="font-size:0.8rem;color:var(--muted);">Bu her zamankinden biraz uzun sürüyor, lütfen bekleyin.</p></div>';
+          grid.innerHTML = skeletonCardsHtml(8) + '<div class="loading-state" style="grid-column:1/-1;"><div class="loader-spinner"></div><h3>İlanlar yükleniyor...</h3><p style="font-size:0.8rem;color:var(--muted);">Bu her zamankinden biraz uzun sürüyor, lütfen bekleyin.</p></div>';
           $('listingCount').textContent = 'Yükleniyor...';
         } else {
-          grid.innerHTML = '<div class="loading-state"><div class="loader-spinner"></div><h3>İlanlar yükleniyor...</h3></div>';
+          grid.innerHTML = skeletonCardsHtml(8);
           $('listingCount').textContent = 'Yükleniyor...';
         }
         if ($('paginationControls')) $('paginationControls').innerHTML = '';
@@ -4324,6 +4436,8 @@
         fragment.appendChild(card);
       });
       grid.appendChild(fragment);
+      grid.classList.toggle('no-entrance-anim', adsGridHasAnimatedOnce);
+      adsGridHasAnimatedOnce = true;
       renderAdsPagination(totalPages);
       updateHeroStats();
     }
@@ -4655,7 +4769,10 @@
     }
     function buildAdUrl(ad) {
       const idPart = ad.shortId ? String(ad.shortId) : encodeURIComponent(ad.id);
-      return location.origin + location.pathname + '#' + idPart;
+      // Paylaşım linkleri artık Cloudflare Worker üzerinden geçiyor: Discord/Twitter
+      // gibi botlar geldiğinde ilana özel önizleme (başlık/fotoğraf) gösteriliyor,
+      // gerçek kullanıcılar ise otomatik olarak gerçek siteye yönlendiriliyor.
+      return 'https://belasco-og.erenggm1.workers.dev/?ad=' + idPart;
     }
 
     async function handleSaveAd(e) {
@@ -5024,9 +5141,22 @@
       })();
     }
 
-    async function copyEmbedCode() {
+    function flashButtonCopied(btnEl, copiedLabel) {
+      if (!btnEl) return;
+      if (!btnEl.dataset.originalHtml) btnEl.dataset.originalHtml = btnEl.innerHTML;
+      clearTimeout(btnEl._copyRevertTimer);
+      btnEl.classList.add('copy-flash');
+      btnEl.innerHTML = copiedLabel || '✅ Kopyalandı!';
+      btnEl._copyRevertTimer = setTimeout(() => {
+        btnEl.innerHTML = btnEl.dataset.originalHtml;
+        btnEl.classList.remove('copy-flash');
+      }, 1600);
+    }
+
+    async function copyEmbedCode(event) {
       const box = $('embedCodeBox');
       if (!box) return;
+      const btnEl = event ? (event.currentTarget || event.target.closest('button')) : null;
       try {
         await navigator.clipboard.writeText(box.value);
         showToast('📋 Embed kodu kopyalandı!', 'success');
@@ -5035,10 +5165,12 @@
         document.execCommand('copy');
         showToast('📋 Embed kodu kopyalandı!', 'success');
       }
+      flashButtonCopied(btnEl, '✅ Kopyalandı!');
     }
 
-    async function shareCurrentAd() {
+    async function shareCurrentAd(event) {
       if (!currentSelectedAdId) return;
+      const btnEl = event ? (event.currentTarget || event.target.closest('button')) : $('shareAdBtn');
       const ad = adsData.find(a => a.id === currentSelectedAdId);
       if (ad && !ad.shortId) await ensureAdShortId(ad);
       const url = ad ? buildAdUrl(ad) : (location.origin + location.pathname + '#' + encodeURIComponent(currentSelectedAdId));
@@ -5056,6 +5188,7 @@
           tmp.remove();
         }
         showToast('🔗 İlan linki kopyalandı!', 'success');
+        flashButtonCopied(btnEl, '✅ Kopyalandı!');
       } catch (e) {
         showToast('Link kopyalanamadı: ' + url, 'warning');
       }
